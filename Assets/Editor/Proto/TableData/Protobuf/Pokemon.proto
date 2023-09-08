@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ProtoDataTable;
+
+message PokemonData{
+	int32 Id = 1;
+	string Name = 2;
+	int32 Skill1 = 3;
+	int32 Skill2 = 4;
+	int32 Skill3 = 5;
+	int32 Skill4 = 6;
+	int32 AttributesId = 7;
+	string Character = 8;
+	float Size = 9;
+	string Icon = 10;
+}
+
+message PokemonTable{
+	repeated PokemonData Table = 1;
+}

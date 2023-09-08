@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package ProtoDataTable;
+
+message SkillData{
+	int32 Id = 1;
+	int32 Type = 2;
+	int32 SkillType = 3;
+	string Name = 4;
+	int32 Weight = 5;
+	float Add = 6;
+	int32 Energy = 7;
+	string Script = 8;
+	string Action = 9;
+	string Effect = 10;
+}
+
+message SkillTable{
+	repeated SkillData Table = 1;
+}

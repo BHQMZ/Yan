@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package ProtoDataTable;
+
+message AttributesData{
+	int32 Id = 1;
+	int32 Type = 2;
+	int32 Health = 3;
+	int32 Attack = 4;
+	int32 Defense = 5;
+	int32 SpecialAttack = 6;
+	int32 SpecialDefense = 7;
+	int32 Speed = 8;
+}
+
+message AttributesTable{
+	repeated AttributesData Table = 1;
+}

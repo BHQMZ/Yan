@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package ProtoDataTable;
+
+message TypeCoefficientData{
+	int32 Id = 1;
+	int32 AttackType = 2;
+	int32 DefenseType = 3;
+	float Coefficient = 4;
+}
+
+message TypeCoefficientTable{
+	repeated TypeCoefficientData Table = 1;
+}

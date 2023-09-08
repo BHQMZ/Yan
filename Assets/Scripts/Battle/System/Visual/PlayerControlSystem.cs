@@ -1,0 +1,67 @@
+﻿using UnityEngine;
+
+namespace Battle
+{
+    public class PlayerControlSystem : System
+    {
+        private EntityManager _entityManager;
+        private EntityQuery _entityQuery;
+        
+        public override void Init(EntityManager entityManager)
+        {
+            _entityManager = entityManager;
+            _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
+            {
+                All = new []{typeof(PlayerControl), typeof(Transform)}
+            });
+        }
+
+        public override void Update()
+        {
+            _entityQuery.GetEntityList().ForEach(entity =>
+            {
+                var playerControl = _entityManager.GetComponent<PlayerControl>(entity);
+                var transform = _entityManager.GetComponent<Transform>(entity);
+                var velocity = Vector3.zero;
+                if (Input.GetKey("w"))
+                {
+                    velocity += Vector3.forward;
+                }
+
+                if (Input.GetKey("s"))
+                {
+                    velocity += Vector3.back;
+                }
+
+                if (Input.GetKey("a"))
+                {
+                    velocity += Vector3.left;
+                }
+
+                if (Input.GetKey("d"))
+                {
+                    velocity += Vector3.right;
+                }
+
+                if (playerControl.velocity != velocity)
+                {
+                    transform.velocity -= playerControl.velocity - velocity;
+                    if (velocity.x > 0)
+                    {
+                        transform.isRight = true;
+                    }
+                    else if (velocity.x < 0)
+                    {
+                        transform.isRight = false;
+                    }
+                    playerControl.velocity = velocity;
+                }
+            });
+        }
+
+        public override void Destroy()
+        {
+            _entityManager.RemoveWithComponent(_entityQuery.desc);
+        }
+    }
+}

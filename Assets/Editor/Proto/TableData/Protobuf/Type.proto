@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package ProtoDataTable;
+
+message TypeData{
+	int32 Id = 1;
+	string Name = 2;
+	string Icon = 3;
+}
+
+message TypeTable{
+	repeated TypeData Table = 1;
+}
