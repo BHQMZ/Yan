@@ -1,4 +1,6 @@
-﻿namespace Battle
+﻿using UnityEngine;
+
+namespace Battle
 {
     public class BoundsSystem : System
     {
@@ -28,19 +30,33 @@
 
         public override void Update()
         {
-            _ballQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityList().ForEach(entity =>
             {
-                var ball = _entityManager.GetComponent<Ball>(entity);
-                if (ball.radius <= 0)
-                {
-                    return;
-                }
-
-                var bounds = _entityManager.GetComponent<Bounds>(entity);
                 var transform = _entityManager.GetComponent<Transform>(entity);
-                _entityQuery.GetEntityList().ForEach(e =>
+                _ballQuery.GetEntityList().ForEach(e =>
                 {
-                    
+                    var ball = _entityManager.GetComponent<Ball>(e);
+                    if (ball.radius <= 0)
+                    {
+                        return;
+                    }
+
+                    var bounds = _entityManager.GetComponent<Bounds>(e);
+                    var ballTransform = _entityManager.GetComponent<Transform>(e);
+                    if (Vector3.Distance(transform.position, ballTransform.position) <= ball.radius)
+                    {
+                        if (!bounds.entityList.Contains(entity.entityId))
+                        {
+                            bounds.entityList.Add(entity.entityId);
+                        }
+                    }
+                    else
+                    {
+                        if (bounds.entityList.Contains(entity.entityId))
+                        {
+                            bounds.entityList.Remove(entity.entityId);
+                        }
+                    }
                 });
             });
         }
