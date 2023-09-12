@@ -18,9 +18,9 @@ namespace Battle
 
         public override void Update()
         {
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var hit = _entityManager.GetComponent<Hit>(entity);
+                var hit = _entityManager.GetComponent<Hit>(entityId);
                 if (!hit.isActivate || hit.targetId == 0)
                 {
                     hit.isActivate = false;
@@ -40,7 +40,7 @@ namespace Battle
 
                 if (hit.curFrame == hit.hitFrame)
                 {
-                    var attribute = _entityManager.GetComponent<Attribute>(entity);
+                    var attribute = _entityManager.GetComponent<Attribute>(entityId);
 
                     hurt.value += attribute.attack;
 

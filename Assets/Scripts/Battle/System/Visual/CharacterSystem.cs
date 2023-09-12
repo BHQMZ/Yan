@@ -20,15 +20,15 @@ namespace Battle
 
         public override void Update(int step, float deltaTime)
         {
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var character = _entityManager.GetComponent<Character>(entity);
+                var character = _entityManager.GetComponent<Character>(entityId);
                 if (!character.transform)
                 {
                     return;
                 }
 
-                var transform = _entityManager.GetComponent<Transform>(entity);
+                var transform = _entityManager.GetComponent<Transform>(entityId);
                 if (transform.velocity != Vector3.zero)
                 {
                     if (character.moveStep != step)
@@ -65,9 +65,9 @@ namespace Battle
                     character.transform.localScale = new Vector3(1, 1, 1);
                 }
 
-                if (_entityManager.HasComponent<Hit>(entity))
+                if (_entityManager.HasComponent<Hit>(entityId))
                 {
-                    var hit = _entityManager.GetComponent<Hit>(entity);
+                    var hit = _entityManager.GetComponent<Hit>(entityId);
                     if (hit.isActivate)
                     {
                         character.animator.SetInteger("Status", 3);

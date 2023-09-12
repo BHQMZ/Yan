@@ -28,15 +28,15 @@ namespace Battle
 
         public override void Update(int step, float deltaTime)
         {
-            _characterQuery.GetEntityList().ForEach(entity =>
+            _characterQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var character = _entityManager.GetComponent<Character>(entity);
+                var character = _entityManager.GetComponent<Character>(entityId);
                 if (character.transform)
                 {
                     return;
                 }
 
-                LoadAsset(entity, AssetManager.CHARACTER_ASSETS, go =>
+                LoadAsset(entityId, AssetManager.CHARACTER_ASSETS, go =>
                 {
                     character.transform = go.transform;
                     character.point = go.transform.Find("CharacterPoint");
@@ -44,15 +44,15 @@ namespace Battle
                 });
             });
             
-            _cameraQuery.GetEntityList().ForEach(entity =>
+            _cameraQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var cameraControl = _entityManager.GetComponent<CameraControl>(entity);
+                var cameraControl = _entityManager.GetComponent<CameraControl>(entityId);
                 if (cameraControl.camera)
                 {
                     return;
                 }
 
-                LoadAsset(entity, AssetManager.CINEMACHINE_ASSETS, go =>
+                LoadAsset(entityId, AssetManager.CINEMACHINE_ASSETS, go =>
                 {
                     cameraControl.camera = go;
                     cameraControl.cameraState = go.GetComponentInChildren<CinemachineStateDrivenCamera>();
@@ -66,9 +66,9 @@ namespace Battle
             _entityManager.RemoveWithComponent(_cameraQuery.desc);
         }
 
-        private void LoadAsset(Entity entity, string assetPath, Action<GameObject> callback)
+        private void LoadAsset(int entityId, string assetPath, Action<GameObject> callback)
         {
-            var asset = _entityManager.GetComponent<Asset>(entity);
+            var asset = _entityManager.GetComponent<Asset>(entityId);
 
             if (asset.go == null && !asset.isLoading && !string.IsNullOrEmpty(asset.assetName))
             {

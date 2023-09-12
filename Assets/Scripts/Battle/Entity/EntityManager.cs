@@ -8,7 +8,7 @@ namespace Battle
         private int _entityIdIndex;
         private readonly Stack<int> _entityIdStack = new();
 
-        private readonly List<Entity> _entitys = new();
+        private readonly List<int> _entityIds = new();
         private readonly Dictionary<int, Dictionary<Type, Component>> _entityComponentMap = new();
         
         private readonly Dictionary<int, EntityQuery> _entityQueryMap = new();
@@ -23,32 +23,32 @@ namespace Battle
             return ++_entityIdIndex;
         }
         
-        public Entity CreateEntity()
+        public int CreateEntity()
         {
-            var entity = new Entity(GetNextEntityId());
-            _entitys.Add(entity);
-            return entity;
+            var entityId = GetNextEntityId();
+            _entityIds.Add(entityId);
+            return entityId;
         }
 
-        public void DestroyEntity(Entity entity)
+        public void DestroyEntity(int entityId)
         {
-            _entitys.Remove(entity);
-            if (_entityComponentMap.TryGetValue(entity.entityId, out var value))
+            _entityIds.Remove(entityId);
+            if (_entityComponentMap.TryGetValue(entityId, out var value))
             {
                 value.Clear();
             }
 
-            _entityIdStack.Push(entity.entityId);
+            _entityIdStack.Push(entityId);
         }
 
-        public void AddComponent(Entity entity, Component component)
+        public void AddComponent(int entityId, Component component)
         {
-            if (!_entityComponentMap.ContainsKey(entity.entityId))
+            if (!_entityComponentMap.ContainsKey(entityId))
             {
-                _entityComponentMap[entity.entityId] = new Dictionary<Type, Component>();
+                _entityComponentMap[entityId] = new Dictionary<Type, Component>();
             }
 
-            var components = _entityComponentMap[entity.entityId];
+            var components = _entityComponentMap[entityId];
 
             var componentType = component.GetType();
 
@@ -65,14 +65,14 @@ namespace Battle
             }
         }
 
-        public void RemoveComponent<T>(Entity entity) where T : Component
+        public void RemoveComponent<T>(int entityId) where T : Component
         {
-            if (!_entityComponentMap.ContainsKey(entity.entityId))
+            if (!_entityComponentMap.ContainsKey(entityId))
             {
                 return;
             }
 
-            var components = _entityComponentMap[entity.entityId];
+            var components = _entityComponentMap[entityId];
 
             var componentType = typeof(T);
 
@@ -99,29 +99,23 @@ namespace Battle
             }
             return null;
         }
-        
-        // 获取指定类型的组件
-        public T GetComponent<T>(Entity entity) where T : Component
-        {
-            return GetComponent<T>(entity.entityId);
-        }
 
         // 检查实体是否包含指定类型的组件
-        public bool HasComponent<T>(Entity entity) where T : Component
+        public bool HasComponent<T>(int entityId) where T : Component
         {
             var componentType = typeof(T);
-            return HasComponent(entity, componentType);
+            return HasComponent(entityId, componentType);
         }
         
         // 检查实体是否包含指定类型的组件
-        public bool HasComponent(Entity entity, Type componentType)
+        public bool HasComponent(int entityId, Type componentType)
         {
-            if (!_entityComponentMap.ContainsKey(entity.entityId))
+            if (!_entityComponentMap.ContainsKey(entityId))
             {
                 return false;
             }
 
-            var components = _entityComponentMap[entity.entityId];
+            var components = _entityComponentMap[entityId];
 
             return components.ContainsKey(componentType);
         }
@@ -171,9 +165,9 @@ namespace Battle
             }
         }
 
-        public List<Entity> GetEntityAll()
+        public List<int> GetEntityIdAll()
         {
-            return _entitys;
+            return _entityIds;
         }
     }
 }

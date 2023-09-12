@@ -18,10 +18,10 @@ namespace Battle
 
         public override void Update()
         {
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var playerControl = _entityManager.GetComponent<PlayerControl>(entity);
-                var transform = _entityManager.GetComponent<Transform>(entity);
+                var playerControl = _entityManager.GetComponent<PlayerControl>(entityId);
+                var transform = _entityManager.GetComponent<Transform>(entityId);
                 var velocity = Vector3.zero;
                 if (Input.GetKey("w"))
                 {

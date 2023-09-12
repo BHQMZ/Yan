@@ -16,9 +16,9 @@
 
         public override void Update()
         {
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var transform = _entityManager.GetComponent<Transform>(entity);
+                var transform = _entityManager.GetComponent<Transform>(entityId);
                 transform.position += transform.velocity;
             });
         }

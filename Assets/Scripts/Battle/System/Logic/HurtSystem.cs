@@ -18,10 +18,10 @@ namespace Battle
 
         public override void Update()
         {
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var hurt = _entityManager.GetComponent<Hurt>(entity);
-                var attribute = _entityManager.GetComponent<Attribute>(entity);
+                var hurt = _entityManager.GetComponent<Hurt>(entityId);
+                var attribute = _entityManager.GetComponent<Attribute>(entityId);
                 if (hurt.value == 0)
                 {
                     return;

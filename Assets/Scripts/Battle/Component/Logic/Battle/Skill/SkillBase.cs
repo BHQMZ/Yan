@@ -15,7 +15,5 @@ namespace Battle
         public int release;
         // 作用目标队列
         public List<int> targetList;
-        // 已生效目标队列
-        public List<int> activateList;
     }
 }

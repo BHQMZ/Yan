@@ -24,23 +24,23 @@ namespace Battle
 
         public override void Update()
         {
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var monsterControl = _entityManager.GetComponent<MonsterControl>(entity);
-                var transform = _entityManager.GetComponent<Transform>(entity);
+                var monsterControl = _entityManager.GetComponent<MonsterControl>(entityId);
+                var transform = _entityManager.GetComponent<Transform>(entityId);
 
                 if (monsterControl.targetId == 0)
                 {
                     var targetDistance = 0f;
                     var targetId = 0;
-                    _playerQuery.GetEntityList().ForEach(player =>
+                    _playerQuery.GetEntityIdList().ForEach(entityId =>
                     {
-                        var playerTransform = _entityManager.GetComponent<Transform>(player);
+                        var playerTransform = _entityManager.GetComponent<Transform>(entityId);
                         var newDistance = Vector3.Distance(playerTransform.position, transform.position);
                         if (targetId == 0 || targetDistance > newDistance)
                         {
                             targetDistance = newDistance;
-                            targetId = player.entityId;
+                            targetId = entityId;
                         }
                     });
                     if (targetId == 0)
@@ -52,7 +52,7 @@ namespace Battle
 
                 var playerTransform = _entityManager.GetComponent<Transform>(monsterControl.targetId);
                 var distance = Vector3.Distance(playerTransform.position, transform.position);
-                var hit = _entityManager.GetComponent<Hit>(entity);
+                var hit = _entityManager.GetComponent<Hit>(entityId);
                 if (distance > 10)
                 {
                     hit.isActivate = false;

@@ -9,24 +9,29 @@ namespace Battle
         private readonly EntityQueryDesc _desc;
         public EntityQueryDesc desc => _desc;
         
-        private List<Entity> _entitys;
+        private List<int> _entityIds;
 
         public EntityQuery(EntityQueryDesc desc)
         {
             _desc = desc;
-            _entitys = new List<Entity>();
+            _entityIds = new List<int>();
         }
 
         public void UpdateEntityList(EntityManager manager)
         {
-            _entitys = manager.GetEntityAll().FindAll(entity => CheckQuery(manager, entity));
+            UpdateEntityList(manager, manager.GetEntityIdAll());
         }
 
-        public bool CheckQuery(EntityManager manager, Entity entity)
+        public void UpdateEntityList(EntityManager manager, List<int> entityIdList)
+        {
+            _entityIds = entityIdList.FindAll(entityId => CheckQuery(manager, entityId));
+        }
+
+        public bool CheckQuery(EntityManager manager, int entityId)
         {
             if (_desc.All is {Length: > 0})
             {
-                if (_desc.All.Any(t => !manager.HasComponent(entity, t)))
+                if (_desc.All.Any(t => !manager.HasComponent(entityId, t)))
                 {
                     return false;
                 }
@@ -34,7 +39,7 @@ namespace Battle
 
             if (_desc.Any is {Length: > 0})
             {
-                if (!_desc.Any.Any(t => manager.HasComponent(entity, t)))
+                if (!_desc.Any.Any(t => manager.HasComponent(entityId, t)))
                 {
                     return false;
                 }
@@ -42,7 +47,7 @@ namespace Battle
 
             if (_desc.None is {Length: > 0})
             {
-                if (_desc.None.Any(t => manager.HasComponent(entity, t)))
+                if (_desc.None.Any(t => manager.HasComponent(entityId, t)))
                 {
                     return false;
                 }
@@ -51,24 +56,24 @@ namespace Battle
             return true;
         }
 
-        public List<Entity> GetEntityList()
+        public List<int> GetEntityIdList()
         {
-            return _entitys;
+            return _entityIds;
         }
 
-        public void AddEntity(EntityManager manager, Entity entity)
+        public void AddEntity(EntityManager manager, int entityId)
         {
-            if (CheckQuery(manager, entity))
+            if (CheckQuery(manager, entityId))
             {
-                _entitys.Add(entity);
+                _entityIds.Add(entityId);
             }
         }
 
-        public void RemoveEntity(Entity entity)
+        public void RemoveEntity(int entityId)
         {
-            if (_entitys.Contains(entity))
+            if (_entityIds.Contains(entityId))
             {
-                _entitys.Remove(entity);
+                _entityIds.Remove(entityId);
             }
         }
     }

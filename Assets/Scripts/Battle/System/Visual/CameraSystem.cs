@@ -22,13 +22,13 @@
 
         public override void Update()
         {
-            var cameraList = _cameraQuery.GetEntityList();
+            var cameraList = _cameraQuery.GetEntityIdList();
             if (cameraList.Count <= 0)
             {
                 return;
             }
             
-            var playerList = _playerQuery.GetEntityList();
+            var playerList = _playerQuery.GetEntityIdList();
             if (playerList.Count <= 0)
             {
                 return;

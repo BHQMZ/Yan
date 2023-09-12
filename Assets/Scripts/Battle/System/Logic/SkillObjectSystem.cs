@@ -17,21 +17,21 @@
         public override void Update()
         {
             // 触发技能
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var bounds = _entityManager.GetComponent<Bounds>(entity);
+                var bounds = _entityManager.GetComponent<Bounds>(entityId);
                 if (bounds.entityList.Count <= 0)
                 {
                     return;
                 }
 
-                var skillObject = _entityManager.GetComponent<SkillObject>(entity);
+                var skillObject = _entityManager.GetComponent<SkillObject>(entityId);
                 var skillBase =_entityManager.GetComponent<SkillBase>(skillObject.skillEntityId);
                 bounds.entityList.ForEach(id =>
                 {
-                    if (!skillBase.activateList.Contains(id))
+                    if (!skillBase.targetList.Contains(id))
                     {
-                        skillBase.activateList.Add(id);
+                        skillBase.targetList.Add(id);
                     }
                 });
             });

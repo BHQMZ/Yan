@@ -30,31 +30,31 @@ namespace Battle
 
         public override void Update()
         {
-            _entityQuery.GetEntityList().ForEach(entity =>
+            _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
-                var transform = _entityManager.GetComponent<Transform>(entity);
-                _ballQuery.GetEntityList().ForEach(e =>
+                var transform = _entityManager.GetComponent<Transform>(entityId);
+                _ballQuery.GetEntityIdList().ForEach(ballEntityId =>
                 {
-                    var ball = _entityManager.GetComponent<Ball>(e);
+                    var ball = _entityManager.GetComponent<Ball>(ballEntityId);
                     if (ball.radius <= 0)
                     {
                         return;
                     }
 
-                    var bounds = _entityManager.GetComponent<Bounds>(e);
-                    var ballTransform = _entityManager.GetComponent<Transform>(e);
+                    var bounds = _entityManager.GetComponent<Bounds>(ballEntityId);
+                    var ballTransform = _entityManager.GetComponent<Transform>(ballEntityId);
                     if (Vector3.Distance(transform.position, ballTransform.position) <= ball.radius)
                     {
-                        if (!bounds.entityList.Contains(entity.entityId))
+                        if (!bounds.entityList.Contains(entityId))
                         {
-                            bounds.entityList.Add(entity.entityId);
+                            bounds.entityList.Add(entityId);
                         }
                     }
                     else
                     {
-                        if (bounds.entityList.Contains(entity.entityId))
+                        if (bounds.entityList.Contains(entityId))
                         {
-                            bounds.entityList.Remove(entity.entityId);
+                            bounds.entityList.Remove(entityId);
                         }
                     }
                 });

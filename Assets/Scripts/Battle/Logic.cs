@@ -9,9 +9,10 @@ namespace Battle
         public void Open(EntityManager entityManager)
         {
             _systems.Add(new MonsterControlSystem());
-            _systems.Add(new HitSystem());
-            _systems.Add(new HurtSystem());
+            _systems.Add(new SkillObjectSystem());
+            _systems.Add(new SkillSystem());
             _systems.Add(new MoveSystem());
+            _systems.Add(new HurtSystem());
 
             _systems.ForEach(system =>
             {
