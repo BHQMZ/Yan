@@ -11,6 +11,8 @@ namespace Battle
             _systems.Add(new MonsterControlSystem());
             _systems.Add(new SkillObjectSystem());
             _systems.Add(new SkillSystem());
+            _systems.Add(new SkillEffectSystem());
+            _systems.Add(new BoundsSystem());
             _systems.Add(new MoveSystem());
             _systems.Add(new HurtSystem());
 

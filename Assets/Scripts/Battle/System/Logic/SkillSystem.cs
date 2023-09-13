@@ -33,7 +33,7 @@
                 var entityIdList = skillEffect.targetQuery.GetEntityIdList();
                 if (entityIdList.Count <= 0)
                 {
-                    return;   
+                    return;
                 }
                 entityIdList.ForEach(id =>
                 {
