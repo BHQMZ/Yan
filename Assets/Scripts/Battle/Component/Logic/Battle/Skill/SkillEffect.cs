@@ -6,7 +6,13 @@ namespace Battle
     {
         // 释放目标
         public int release;
+        // 生效目标条件
         public EntityQuery targetQuery;
-        public List<int> activateList;
+        // 生效目标队列
+        public List<int> activateList = new();
+        // 执行目标队列
+        public List<int> executeList = new();
+        // 是否结束
+        public bool isOver;
     }
 }

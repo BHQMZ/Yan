@@ -10,7 +10,7 @@
             _entityManager = entityManager;
             _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(SkillBase), typeof(SkillEffect)}
+                All = new []{typeof(SkillBase)}
             });
         }
 
@@ -19,16 +19,25 @@
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var skillBase = _entityManager.GetComponent<SkillBase>(entityId);
-                if (skillBase.isOver)
+                if (!skillBase.isOverCommand)
                 {
-                    return;
+                    skillBase.effectId = _entityManager.CreateEntity();
+                    _entityManager.AddComponent(skillBase.effectId, new SkillEffect
+                    {
+                        release = skillBase.release,
+                        targetQuery = new EntityQuery(new EntityQueryDesc
+                        {
+                            All = new []{typeof(Hurt), typeof(Attribute)}
+                        })
+                    });
+                    skillBase.isOverCommand = true;
                 }
                 if (skillBase.targetList.Count <= 0)
                 {
                     return;
                 }
 
-                var skillEffect = _entityManager.GetComponent<SkillEffect>(entityId);
+                var skillEffect = _entityManager.GetComponent<SkillEffect>(skillBase.effectId);
                 skillEffect.targetQuery.UpdateEntityList(_entityManager, skillBase.targetList);
                 var entityIdList = skillEffect.targetQuery.GetEntityIdList();
                 if (entityIdList.Count <= 0)

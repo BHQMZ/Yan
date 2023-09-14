@@ -18,7 +18,13 @@
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var skillEffect = _entityManager.GetComponent<SkillEffect>(entityId);
-                
+                skillEffect.activateList.ForEach(targetId =>
+                {
+                    if (!skillEffect.executeList.Contains(targetId))
+                    {
+                        skillEffect.executeList.Add(targetId);
+                    }
+                });
             });
         }
 
