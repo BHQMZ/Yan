@@ -8,6 +8,7 @@ namespace Battle
 
         public override void Init(EntityManager entityManager)
         {
+            _entityManager = entityManager;
             _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
                 All = new []{typeof(Action)}
@@ -26,6 +27,7 @@ namespace Battle
 
         public override void Destroy()
         {
+            _entityManager.RemoveWithComponent(_entityQuery.desc);
         }
     }
 }
