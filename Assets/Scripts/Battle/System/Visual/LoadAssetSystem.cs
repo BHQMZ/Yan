@@ -41,6 +41,7 @@ namespace Battle
                     character.transform = go.transform;
                     character.point = go.transform.Find("CharacterPoint");
                     character.animator = go.GetComponentInChildren<Animator>();
+                    character.animator.speed = 0;
                 });
             });
             

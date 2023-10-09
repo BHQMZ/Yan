@@ -53,9 +53,11 @@ namespace Battle
                 var playerTransform = _entityManager.GetComponent<Transform>(monsterControl.targetId);
                 var distance = Vector3.Distance(playerTransform.position, transform.position);
                 var hit = _entityManager.GetComponent<Hit>(entityId);
+                var action = _entityManager.GetComponent<Action>(entityId);
                 if (distance > 10)
                 {
                     hit.isActivate = false;
+                    action.actionName = "Move";
                     transform.velocity = (playerTransform.position - transform.position).normalized * 0.5f;
                     if (transform.velocity.x > 0)
                     {

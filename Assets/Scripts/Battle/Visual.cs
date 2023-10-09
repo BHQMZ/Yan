@@ -10,6 +10,7 @@ namespace Battle
         {
             _systems.Add(new LoadAssetSystem());
             _systems.Add(new CharacterSystem());
+            _systems.Add(new AnimationSystem());
 
             _systems.ForEach(system =>
             {

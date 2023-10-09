@@ -5,7 +5,7 @@ namespace Battle
     public class Action : Component
     {
         // 动作名
-        public int actionName;
+        public string actionName;
         // 动作帧
         public int actionFrame;
         // 触发帧

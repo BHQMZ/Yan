@@ -30,6 +30,11 @@ namespace StateMachine.State
                 entityManager.AddComponent(player, new Character());
                 entityManager.AddComponent(player, new PlayerControl());
                 entityManager.AddComponent(player, new Hurt());
+                entityManager.AddComponent(player, new Action
+                {
+                    actionName = "Empty",
+                    actionFrame = 60
+                });
                 entityManager.AddComponent(player, new Attribute
                 {
                     hp = 100,

@@ -1,5 +1,5 @@
 ﻿
-using Manager;
+using System;
 using UnityEngine;
 
 namespace Battle
@@ -29,31 +29,27 @@ namespace Battle
                 }
 
                 var transform = _entityManager.GetComponent<Transform>(entityId);
-                if (transform.velocity != Vector3.zero)
+                // 逻辑位置转表现位置
+                var stepStartPos = character.transform.position;
+                var stepEndPos = transform.position;
+                if (stepStartPos != stepEndPos)
                 {
                     if (character.moveStep != step)
                     {
                         character.moveStep = step;
-                        var stepStartPos = character.transform.position;
-                        var stepEndPos = transform.position;
                         character.stepMoveVelocity = (stepEndPos - stepStartPos).normalized * Vector3.Distance(stepStartPos, stepEndPos) / 0.033f;
                     }
 
-                    character.transform.position += character.stepMoveVelocity * deltaTime;
-                }
-                else
-                {
-                    character.stepMoveVelocity = Vector3.zero;
-                    character.transform.position = transform.position;
-                }
+                    var pos = character.transform.position + character.stepMoveVelocity * deltaTime;
 
-                if (character.stepMoveVelocity != Vector3.zero)
-                {
-                    character.animator.SetInteger("Move", 1);
-                }
-                else
-                {
-                    character.animator.SetInteger("Move", 0);
+                    if (Math.Abs(Vector3.Dot((pos - stepEndPos).normalized, character.stepMoveVelocity.normalized) - 1) < 0.01f)
+                    {
+                        character.transform.position = pos;
+                    }
+                    else
+                    {
+                        character.transform.position = stepEndPos;
+                    }
                 }
 
                 if (transform.isRight)
@@ -63,19 +59,6 @@ namespace Battle
                 else
                 {
                     character.transform.localScale = new Vector3(1, 1, 1);
-                }
-
-                if (_entityManager.HasComponent<Hit>(entityId))
-                {
-                    var hit = _entityManager.GetComponent<Hit>(entityId);
-                    if (hit.isActivate)
-                    {
-                        character.animator.SetInteger("Status", 3);
-                    }
-                    else
-                    {
-                        character.animator.SetInteger("Status", 1);
-                    }
                 }
             });
         }

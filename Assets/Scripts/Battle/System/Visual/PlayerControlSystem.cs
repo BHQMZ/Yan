@@ -43,6 +43,14 @@ namespace Battle
                     velocity += Vector3.right;
                 }
 
+                if (velocity != Vector3.zero)
+                {
+                    velocity = velocity.normalized;
+                    var action = _entityManager.GetComponent<Action>(entityId);
+                    action.actionName = "Move";
+                    action.actionFrame = 36;
+                }
+
                 if (playerControl.velocity != velocity)
                 {
                     transform.velocity -= playerControl.velocity - velocity;
