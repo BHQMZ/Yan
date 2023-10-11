@@ -12,7 +12,7 @@ namespace Battle
             _entityManager = entityManager;
             _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(Hit), typeof(Attribute)}
+                All = new []{typeof(Hit), typeof(SkillBase), typeof(Attribute)}
             });
         }
 
@@ -20,40 +20,16 @@ namespace Battle
         {
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
+                var skillBase = _entityManager.GetComponent<SkillBase>(entityId);
+                if (!skillBase.isActivate)
+                {
+                    return;
+                }
+
                 var hit = _entityManager.GetComponent<Hit>(entityId);
-                if (!hit.isActivate || hit.targetId == 0)
-                {
-                    hit.isActivate = false;
-                    hit.curFrame = 0;
-                    return;
-                }
+                var attribute = _entityManager.GetComponent<Attribute>(entityId);
 
-                var hurt = _entityManager.GetComponent<Hurt>(hit.targetId);
-                if (hurt == null)
-                {
-                    hit.isActivate = false;
-                    hit.curFrame = 0;
-                    return;
-                }
-
-                hit.curFrame++;
-
-                if (hit.curFrame == hit.hitFrame)
-                {
-                    var attribute = _entityManager.GetComponent<Attribute>(entityId);
-
-                    hurt.value += attribute.attack;
-
-                    Debug.Log("击中");
-                }
-
-                if (hit.curFrame < hit.actionFrame)
-                {
-                    return;
-                }
-
-                hit.isActivate = false;
-                hit.curFrame = 0;
+                hurt.value += attribute.attack;
             });
         }
 

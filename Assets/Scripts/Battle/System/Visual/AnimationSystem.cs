@@ -25,7 +25,7 @@ namespace Battle
                     return;
                 }
                 var action = _entityManager.GetComponent<Action>(entityId);
-                character.animator.CrossFade(action.actionName, 0.25f, 1, action.curFrame * 1f / action.actionFrame);
+                character.animator.CrossFade(action.actionName, 0, -1, action.curFrame * 1f / action.actionFrame);
             });
         }
 
