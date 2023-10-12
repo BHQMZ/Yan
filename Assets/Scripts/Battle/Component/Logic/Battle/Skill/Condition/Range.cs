@@ -1,4 +1,4 @@
-﻿namespace Battle.Trigger
+﻿namespace Battle.Condition
 {
     public class Range : Component
     {

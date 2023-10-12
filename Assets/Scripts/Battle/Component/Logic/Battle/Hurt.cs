@@ -2,6 +2,8 @@
 {
     public class Hurt : Component
     {
-        public int value;
+        public int Release;
+        public int Target;
+        public int Value;
     }
 }

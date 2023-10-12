@@ -8,10 +8,12 @@ namespace Battle
     public class SkillBase : Component
     {
         // 释放目标
-        public int release;
+        public int Release;
         // 生效目标队列
-        public List<int> targetList = new();
+        public readonly List<int> TargetList = new();
         // 是否激活
-        public bool isActivate;
+        public bool IsActivate;
+        // 是否生效
+        public bool IsTakeEffect;
     }
 }

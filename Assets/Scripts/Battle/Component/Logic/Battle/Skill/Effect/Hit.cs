@@ -1,7 +1,8 @@
-﻿namespace Battle
+﻿namespace Battle.Effect
 {
     public class Hit : Component
     {
-        public float value;
+        public float AddValue;
+        public bool IsTaskEffect;
     }
 }

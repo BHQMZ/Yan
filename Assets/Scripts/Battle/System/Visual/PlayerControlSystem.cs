@@ -47,8 +47,7 @@ namespace Battle
                 {
                     velocity = velocity.normalized;
                     var action = _entityManager.GetComponent<Action>(entityId);
-                    action.actionName = "Move";
-                    action.actionFrame = 36;
+                    action.ActionName = "Move";
                 }
 
                 if (playerControl.velocity != velocity)

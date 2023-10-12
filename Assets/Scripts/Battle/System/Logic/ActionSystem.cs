@@ -20,8 +20,19 @@ namespace Battle
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var action = _entityManager.GetComponent<Action>(entityId);
+                if (action.ActionName != action.CurData.Name)
+                {
+                    // 切换当前动作
+                    action.CurData = action.ActionDataList.Find(data => data.Name == action.ActionName);
+                    action.CurFrame = 0;
+                }
 
-                action.curFrame++;
+                action.CurFrame++;
+                if (!action.CurData.IsLoop && action.CurFrame == action.CurData.Frame)
+                {
+                    // 当前动作播放完毕，切换下一个动作（默认切待机
+                    action.ActionName = "Idle";
+                }
             });
         }
 

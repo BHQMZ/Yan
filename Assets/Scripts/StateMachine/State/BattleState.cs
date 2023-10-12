@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Battle;
 using Manager;
 
@@ -30,11 +31,6 @@ namespace StateMachine.State
                 entityManager.AddComponent(player, new Character());
                 entityManager.AddComponent(player, new PlayerControl());
                 entityManager.AddComponent(player, new Hurt());
-                entityManager.AddComponent(player, new Action
-                {
-                    actionName = "Empty",
-                    actionFrame = 60
-                });
                 entityManager.AddComponent(player, new Attribute
                 {
                     hp = 100,
@@ -44,6 +40,17 @@ namespace StateMachine.State
                 entityManager.AddComponent(player, new Asset{
                     assetName = "Hero"
                 });
+
+                var heroAction = new Action
+                {
+                    ActionName = "Idle"
+                };
+                heroAction.ActionDataList.Add(new ActionData
+                {
+                    Name = "Idle",
+                    Frame = 
+                });
+                entityManager.AddComponent(player, heroAction);
 
                 var monster = entityManager.CreateEntity();
                 entityManager.AddComponent(monster, new Transform());

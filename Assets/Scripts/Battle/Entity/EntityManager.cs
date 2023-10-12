@@ -14,6 +14,8 @@ namespace Battle
         private readonly Dictionary<int, EntityQuery> _entityQueryMap = new();
         private readonly Dictionary<int, int> _entityQueryUseCountMap = new();
 
+        private bool _isUpdateQuery;
+
         private int GetNextEntityId()
         {
             if (_entityIdStack.Count > 0)
@@ -33,10 +35,8 @@ namespace Battle
         public void DestroyEntity(int entityId)
         {
             _entityIds.Remove(entityId);
-            if (_entityComponentMap.TryGetValue(entityId, out var value))
-            {
-                value.Clear();
-            }
+            // 清除实体关联组件
+            RemoveEntityComponentAll(entityId);
 
             _entityIdStack.Push(entityId);
         }
@@ -62,6 +62,8 @@ namespace Battle
             {
                 // 添加新组件
                 components.Add(componentType, component);
+                // 组件变动，需要重新更新
+                _isUpdateQuery = true;
             }
         }
 
@@ -79,6 +81,25 @@ namespace Battle
             if (components.ContainsKey(componentType))
             {
                 components.Remove(componentType);
+                // 组件变动，需要重新更新
+                _isUpdateQuery = true;
+            }
+        }
+
+        // 清除实体关联的全部组件
+        public void RemoveEntityComponentAll(int entityId)
+        {
+            if (!_entityComponentMap.ContainsKey(entityId))
+            {
+                return;
+            }
+            
+            var components = _entityComponentMap[entityId];
+            if (components.Count > 0)
+            {
+                components.Clear();
+                // 组件变动，需要重新更新
+                _isUpdateQuery = true;
             }
         }
         
@@ -159,6 +180,10 @@ namespace Battle
 
         public void UpdateWithComponent()
         {
+            if (!_isUpdateQuery)
+            {
+                return;
+            }
             foreach (var valuePair in _entityQueryMap)
             {
                 valuePair.Value.UpdateEntityList(this);

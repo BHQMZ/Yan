@@ -6,31 +6,32 @@ namespace Battle
     {
         private EntityManager _entityManager;
         private EntityQuery _entityQuery;
-        
+
         public override void Init(EntityManager entityManager)
         {
             _entityManager = entityManager;
             _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(Hurt), typeof(Attribute)}
+                All = new []{typeof(Hurt)}
             });
         }
 
         public override void Update()
         {
+            _entityManager.UpdateWithComponent();
+            
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var hurt = _entityManager.GetComponent<Hurt>(entityId);
-                var attribute = _entityManager.GetComponent<Attribute>(entityId);
-                if (hurt.value == 0)
-                {
-                    return;
-                }
 
-                Debug.Log($"受到{hurt.value}伤害");
+                // var releaseAttr = _entityManager.GetComponent<Attribute>(hurt.Release);
+                var targetAttr = _entityManager.GetComponent<Attribute>(hurt.Target);
+
+                Debug.Log($"受到{hurt.Value}伤害");
                 
-                attribute.hp -= hurt.value;
-                hurt.value = 0;
+                targetAttr.hp -= hurt.Value;
+                
+                _entityManager.DestroyEntity(entityId);
             });
         }
 
