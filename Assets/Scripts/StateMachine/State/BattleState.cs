@@ -48,7 +48,7 @@ namespace StateMachine.State
                 heroAction.ActionDataList.Add(new ActionData
                 {
                     Name = "Idle",
-                    Frame = 
+                    Frame = 60
                 });
                 entityManager.AddComponent(player, heroAction);
 
@@ -56,11 +56,6 @@ namespace StateMachine.State
                 entityManager.AddComponent(monster, new Transform());
                 entityManager.AddComponent(monster, new Character());
                 entityManager.AddComponent(monster, new MonsterControl());
-                entityManager.AddComponent(monster, new Hit
-                {
-                    hitFrame = 34,
-                    actionFrame = 60
-                });
                 entityManager.AddComponent(monster, new Attribute
                 {
                     hp = 100,
@@ -70,6 +65,22 @@ namespace StateMachine.State
                 entityManager.AddComponent(monster, new Asset{
                     assetName = "Monster"
                 });
+                var monsterAction = new Action
+                {
+                    ActionName = "Idle"
+                };
+                monsterAction.ActionDataList.Add(new ActionData
+                {
+                    Name = "Idle",
+                    Frame = 60
+                });
+                monsterAction.ActionDataList.Add(new ActionData
+                {
+                    Name = "Idle",
+                    Frame = 60
+                });
+                entityManager.AddComponent(monster, monsterAction);
+                
 
                 var camera = entityManager.CreateEntity();
                 entityManager.AddComponent(camera, new CameraControl());
