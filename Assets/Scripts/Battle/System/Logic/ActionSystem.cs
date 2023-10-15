@@ -15,23 +15,33 @@ namespace Battle
             });
         }
 
-        public override void Update()
+        public override void Update(int step)
         {
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var action = _entityManager.GetComponent<Action>(entityId);
-                if (action.ActionName != action.CurData.Name)
+                if (action.TriggerAttack != AttackActionEnum.Null)
                 {
-                    // 切换当前动作
-                    action.CurData = action.ActionDataList.Find(data => data.Name == action.ActionName);
-                    action.CurFrame = 0;
+                    if (action.TriggerAttack != action.CurAttack.Attack)
+                    {
+                        action.CurAttack = action.ActionDataList.Find(data => data.Attack == action.TriggerAttack);
+                    }
+                    action.TriggerAttack = AttackActionEnum.Null;
+                    action.TriggerAttackStep = step;
+                    action.CurAttack.CurFrame = 0;
                 }
 
-                action.CurFrame++;
-                if (!action.CurData.IsLoop && action.CurFrame == action.CurData.Frame)
+                if (action.CurAttack.Attack == AttackActionEnum.Null)
                 {
-                    // 当前动作播放完毕，切换下一个动作（默认切待机
-                    action.ActionName = "Idle";
+                    return;
+                }
+
+                action.CurAttack.CurFrame++;
+
+                if (!action.CurAttack.IsLoop && action.CurAttack.CurFrame == action.CurAttack.Frame)
+                {
+                    // 当前动作播放完毕
+                    action.CurAttack = default;
                 }
             });
         }

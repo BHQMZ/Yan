@@ -21,11 +21,11 @@ namespace Battle
             });
         }
 
-        public void Update()
+        public void Update(int step)
         {
             _systems.ForEach(system =>
             {
-                system.Update();
+                system.Update(step);
             });
         }
 

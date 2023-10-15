@@ -23,42 +23,38 @@ namespace Battle
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var character = _entityManager.GetComponent<Character>(entityId);
-                if (!character.transform)
+                if (!character.Transform)
                 {
                     return;
                 }
 
                 var transform = _entityManager.GetComponent<Transform>(entityId);
-                // 逻辑位置转表现位置
-                var stepStartPos = character.transform.position;
-                var stepEndPos = transform.position;
-                if (stepStartPos != stepEndPos)
+                // // 逻辑位置转表现位置
+                if (transform.Velocity != Vector3.zero)
                 {
-                    if (character.moveStep != step)
+                    if (character.MoveStep != step)
                     {
-                        character.moveStep = step;
-                        character.stepMoveVelocity = (stepEndPos - stepStartPos).normalized * Vector3.Distance(stepStartPos, stepEndPos) / 0.033f;
+                        character.MoveStep = step;
+                        var stepStartPos = character.Transform.position;
+                        var stepEndPos = transform.Position;
+                        character.StepMoveVelocity = (stepEndPos - stepStartPos).normalized * Vector3.Distance(stepStartPos, stepEndPos) / 0.033f;
                     }
 
-                    var pos = character.transform.position + character.stepMoveVelocity * deltaTime;
-
-                    if (Math.Abs(Vector3.Dot((pos - stepEndPos).normalized, character.stepMoveVelocity.normalized) - 1) < 0.01f)
-                    {
-                        character.transform.position = pos;
-                    }
-                    else
-                    {
-                        character.transform.position = stepEndPos;
-                    }
-                }
-
-                if (transform.isRight)
-                {
-                    character.transform.localScale = new Vector3(-1, 1, 1);
+                    character.Transform.position += character.StepMoveVelocity * deltaTime;
                 }
                 else
                 {
-                    character.transform.localScale = new Vector3(1, 1, 1);
+                    character.StepMoveVelocity = Vector3.zero;
+                    character.Transform.position = transform.Position;
+                }
+
+                if (transform.IsRight)
+                {
+                    character.Transform.localScale = new Vector3(-1, 1, 1);
+                }
+                else
+                {
+                    character.Transform.localScale = new Vector3(1, 1, 1);
                 }
             });
         }

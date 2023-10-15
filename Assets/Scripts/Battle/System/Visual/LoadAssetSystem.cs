@@ -31,17 +31,16 @@ namespace Battle
             _characterQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var character = _entityManager.GetComponent<Character>(entityId);
-                if (character.transform)
+                if (character.Transform)
                 {
                     return;
                 }
 
                 LoadAsset(entityId, AssetManager.CHARACTER_ASSETS, go =>
                 {
-                    character.transform = go.transform;
-                    character.point = go.transform.Find("CharacterPoint");
-                    character.animator = go.GetComponentInChildren<Animator>();
-                    character.animator.speed = 0;
+                    character.Transform = go.transform;
+                    character.Point = go.transform.Find("CharacterPoint");
+                    character.Animator = go.GetComponentInChildren<Animator>();
                 });
             });
             

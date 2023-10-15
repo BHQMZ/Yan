@@ -14,7 +14,6 @@ namespace StateMachine.State
 
         private Logic _logic;
         private Visual _visual;
-        private Control _control;
 
         public BattleState(StateMachineBase stateMachine) : base(stateMachine)
         {
@@ -29,8 +28,8 @@ namespace StateMachine.State
                 var player = entityManager.CreateEntity();
                 entityManager.AddComponent(player, new Transform());
                 entityManager.AddComponent(player, new Character());
+                entityManager.AddComponent(player, new AnimatorControl());
                 entityManager.AddComponent(player, new PlayerControl());
-                entityManager.AddComponent(player, new Hurt());
                 entityManager.AddComponent(player, new Attribute
                 {
                     hp = 100,
@@ -41,13 +40,10 @@ namespace StateMachine.State
                     assetName = "Hero"
                 });
 
-                var heroAction = new Action
+                var heroAction = new Action();
+                heroAction.ActionDataList.Add(new AttackActionData
                 {
-                    ActionName = "Idle"
-                };
-                heroAction.ActionDataList.Add(new ActionData
-                {
-                    Name = "Idle",
+                    Attack = AttackActionEnum.Attack,
                     Frame = 60
                 });
                 entityManager.AddComponent(player, heroAction);
@@ -55,6 +51,7 @@ namespace StateMachine.State
                 var monster = entityManager.CreateEntity();
                 entityManager.AddComponent(monster, new Transform());
                 entityManager.AddComponent(monster, new Character());
+                entityManager.AddComponent(monster, new AnimatorControl());
                 entityManager.AddComponent(monster, new MonsterControl());
                 entityManager.AddComponent(monster, new Attribute
                 {
@@ -65,22 +62,14 @@ namespace StateMachine.State
                 entityManager.AddComponent(monster, new Asset{
                     assetName = "Monster"
                 });
-                var monsterAction = new Action
+                var monsterAction = new Action();
+                monsterAction.ActionDataList.Add(new AttackActionData
                 {
-                    ActionName = "Idle"
-                };
-                monsterAction.ActionDataList.Add(new ActionData
-                {
-                    Name = "Idle",
-                    Frame = 60
-                });
-                monsterAction.ActionDataList.Add(new ActionData
-                {
-                    Name = "Idle",
+                    Attack = AttackActionEnum.Attack,
                     Frame = 60
                 });
                 entityManager.AddComponent(monster, monsterAction);
-                
+
 
                 var camera = entityManager.CreateEntity();
                 entityManager.AddComponent(camera, new CameraControl());
@@ -88,8 +77,6 @@ namespace StateMachine.State
                     assetName = "Battle/Battle"
                 });
 
-                _control = new Control();
-                _control.Open(entityManager);
                 _logic = new Logic();
                 _logic.Open(entityManager);
                 _visual = new Visual();
@@ -105,13 +92,12 @@ namespace StateMachine.State
             {
                 return;
             }
-            _control.Update();
             _accumulatedTime += deltaTime;
             while (_accumulatedTime >= _stepTime)
             {
                 _accumulatedTime -= _stepTime;
                 _step++;
-                _logic.Update();
+                _logic.Update(_step);
             }
         }
 
@@ -128,7 +114,6 @@ namespace StateMachine.State
         {
             _logic.Destroy();
             _visual.Destroy();
-            _control.Destroy();
         }
     }
 }

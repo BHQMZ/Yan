@@ -16,7 +16,7 @@ namespace Battle
             });
         }
 
-        public override void Update()
+        public override void Update(int step)
         {
             _actionQuery.GetEntityIdList().ForEach(ActionTrigger);
         }
@@ -41,11 +41,11 @@ namespace Battle
             if (!triggerAction.IsSetAction)
             {
                 // 设置施法者动作
-                action.ActionName = triggerAction.ActionName;
+                action.TriggerAttack = triggerAction.AttackActionEnum;
                 triggerAction.IsSetAction = true;
             }
 
-            if (action.CurFrame == action.CurData.EventFrame)
+            if (action.CurAttack.CurFrame == action.CurAttack.EventFrame)
             {
                 // 触发动作事件帧
                 skillBase.IsTakeEffect = true;

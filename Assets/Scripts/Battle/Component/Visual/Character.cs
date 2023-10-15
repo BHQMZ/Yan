@@ -4,11 +4,11 @@ namespace Battle
 {
     public class Character : Component
     {
-        public UnityEngine.Transform transform;
-        public UnityEngine.Transform point;
-        public Animator animator;
+        public UnityEngine.Transform Transform;
+        public UnityEngine.Transform Point;
+        public Animator Animator;
 
-        public int moveStep;
-        public Vector3 stepMoveVelocity;
+        public int MoveStep;
+        public Vector3 StepMoveVelocity;
     }
 }

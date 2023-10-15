@@ -16,7 +16,7 @@ namespace Battle
             });
         }
 
-        public override void Update()
+        public override void Update(int step)
         {
             _entityManager.UpdateWithComponent();
             

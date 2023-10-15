@@ -4,6 +4,6 @@ namespace Battle
 {
     public class MonsterControl : Component
     {
-        public int targetId;
+        public int TargetId;
     }
 }

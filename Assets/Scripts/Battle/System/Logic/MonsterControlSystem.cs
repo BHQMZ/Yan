@@ -22,21 +22,21 @@ namespace Battle
             });
         }
 
-        public override void Update()
+        public override void Update(int step)
         {
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var monsterControl = _entityManager.GetComponent<MonsterControl>(entityId);
                 var transform = _entityManager.GetComponent<Transform>(entityId);
 
-                if (monsterControl.targetId == 0)
+                if (monsterControl.TargetId == 0)
                 {
                     var targetDistance = 0f;
                     var targetId = 0;
                     _playerQuery.GetEntityIdList().ForEach(entityId =>
                     {
                         var playerTransform = _entityManager.GetComponent<Transform>(entityId);
-                        var newDistance = Vector3.Distance(playerTransform.position, transform.position);
+                        var newDistance = Vector3.Distance(playerTransform.Position, transform.Position);
                         if (targetId == 0 || targetDistance > newDistance)
                         {
                             targetDistance = newDistance;
@@ -47,28 +47,33 @@ namespace Battle
                     {
                         return;
                     }
-                    monsterControl.targetId = targetId;
+                    monsterControl.TargetId = targetId;
                 }
 
-                var playerTransform = _entityManager.GetComponent<Transform>(monsterControl.targetId);
-                var distance = Vector3.Distance(playerTransform.position, transform.position);
+                var playerTransform = _entityManager.GetComponent<Transform>(monsterControl.TargetId);
+                var distance = Vector3.Distance(playerTransform.Position, transform.Position);
                 var action = _entityManager.GetComponent<Action>(entityId);
                 if (distance > 10)
                 {
-                    action.ActionName = "Move";
-                    transform.velocity = (playerTransform.position - transform.position).normalized * 0.5f;
-                    if (transform.velocity.x > 0)
+                    action.MoveState = MoveStateEnum.Walk;
+                    transform.Velocity = (playerTransform.Position - transform.Position).normalized * 0.5f;
+                    if (transform.Velocity.x > 0)
                     {
-                        transform.isRight = true;
+                        transform.IsRight = true;
                     }
-                    else if (transform.velocity.x < 0)
+                    else if (transform.Velocity.x < 0)
                     {
-                        transform.isRight = false;
+                        transform.IsRight = false;
                     }
                 }
                 else
                 {
-                    transform.velocity = Vector3.zero;
+                    action.MoveState = MoveStateEnum.Null;
+                    if (action.CurAttack.Attack == AttackActionEnum.Null)
+                    {
+                        action.TriggerAttack = AttackActionEnum.Attack;
+                    }
+                    transform.Velocity = Vector3.zero;
                 }
             });
         }

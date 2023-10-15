@@ -3,7 +3,7 @@
     public class TriggerAction : Component
     {
         public bool IsSetAction;
-        public string ActionName;
+        public AttackActionEnum AttackActionEnum;
         public int TaskFrame;
     }
 }

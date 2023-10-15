@@ -2,7 +2,7 @@
 
 namespace Battle
 {
-    public class PlayerControlSystem : System
+    public class PlayerControlSystem : VisualSystem
     {
         private EntityManager _entityManager;
         private EntityQuery _entityQuery;
@@ -16,12 +16,14 @@ namespace Battle
             });
         }
 
-        public override void Update()
+        public override void Update(int step, float deltaTime)
         {
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var playerControl = _entityManager.GetComponent<PlayerControl>(entityId);
                 var transform = _entityManager.GetComponent<Transform>(entityId);
+                var action = _entityManager.GetComponent<Action>(entityId);
+
                 var velocity = Vector3.zero;
                 if (Input.GetKey("w"))
                 {
@@ -46,20 +48,23 @@ namespace Battle
                 if (velocity != Vector3.zero)
                 {
                     velocity = velocity.normalized;
-                    var action = _entityManager.GetComponent<Action>(entityId);
-                    action.ActionName = "Move";
+                    action.MoveState = MoveStateEnum.Walk;
+                }
+                else
+                {
+                    action.MoveState = MoveStateEnum.Null;
                 }
 
                 if (playerControl.velocity != velocity)
                 {
-                    transform.velocity -= playerControl.velocity - velocity;
+                    transform.Velocity -= playerControl.velocity - velocity;
                     if (velocity.x > 0)
                     {
-                        transform.isRight = true;
+                        transform.IsRight = true;
                     }
                     else if (velocity.x < 0)
                     {
-                        transform.isRight = false;
+                        transform.IsRight = false;
                     }
                     playerControl.velocity = velocity;
                 }

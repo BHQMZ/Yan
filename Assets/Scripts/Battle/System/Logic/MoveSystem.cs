@@ -1,4 +1,6 @@
-﻿namespace Battle
+﻿using UnityEngine;
+
+namespace Battle
 {
     public class MoveSystem : System
     {
@@ -14,12 +16,12 @@
             });
         }
 
-        public override void Update()
+        public override void Update(int step)
         {
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var transform = _entityManager.GetComponent<Transform>(entityId);
-                transform.position += transform.velocity;
+                transform.Position += transform.Velocity;
             });
         }
 

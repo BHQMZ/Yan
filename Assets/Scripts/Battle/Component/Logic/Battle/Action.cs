@@ -2,22 +2,44 @@
 
 namespace Battle
 {
-    public class Action : Component
+    public enum AttackActionEnum
     {
-        // 动作名
-        public string ActionName;
-        // 当前数据
-        public ActionData CurData;
-        // 当前帧
-        public int CurFrame;
-        // 动作数据列表
-        public readonly List<ActionData> ActionDataList = new();
+        Null,
+        // 普通攻击
+        Attack
     }
 
-    public struct ActionData
+    public enum MoveStateEnum
     {
-        // 动作名
-        public string Name;
+        // 没有移动
+        Null,
+        // 行走
+        Walk,
+        // 奔跑
+        Run
+    }
+
+    public class Action : Component
+    {
+        // 移动状态
+        public MoveStateEnum MoveState;
+        
+        // 触发攻击动作
+        public AttackActionEnum TriggerAttack;
+        // 触发攻击动作帧
+        public int TriggerAttackStep;
+        // 当前攻击动作
+        public AttackActionData CurAttack;
+        // 攻击动作数据列表
+        public readonly List<AttackActionData> ActionDataList = new();
+    }
+
+    public struct AttackActionData
+    {
+        // 攻击动作
+        public AttackActionEnum Attack;
+        // 当前帧
+        public int CurFrame;
         // 总帧
         public int Frame;
         // 事件帧

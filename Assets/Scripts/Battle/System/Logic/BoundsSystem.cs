@@ -28,7 +28,7 @@ namespace Battle
             });
         }
 
-        public override void Update()
+        public override void Update(int step)
         {
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
@@ -43,7 +43,7 @@ namespace Battle
 
                     var bounds = _entityManager.GetComponent<Bounds>(ballEntityId);
                     var ballTransform = _entityManager.GetComponent<Transform>(ballEntityId);
-                    if (Vector3.Distance(transform.position, ballTransform.position) <= ball.radius)
+                    if (Vector3.Distance(transform.Position, ballTransform.Position) <= ball.radius)
                     {
                         if (!bounds.entityList.Contains(entityId))
                         {

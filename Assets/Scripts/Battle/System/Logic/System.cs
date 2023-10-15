@@ -6,7 +6,7 @@ namespace Battle
     {
         public abstract void Init(EntityManager entityManager);
 
-        public abstract void Update();
+        public abstract void Update(int step);
 
         public abstract void Destroy();
     }

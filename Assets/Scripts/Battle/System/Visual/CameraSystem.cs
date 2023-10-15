@@ -1,6 +1,6 @@
 ﻿namespace Battle
 {
-    public class CameraSystem : System
+    public class CameraSystem : VisualSystem
     {
         private EntityManager _entityManager;
         private EntityQuery _cameraQuery;
@@ -20,7 +20,7 @@
             });
         }
 
-        public override void Update()
+        public override void Update(int step, float deltaTime)
         {
             var cameraList = _cameraQuery.GetEntityIdList();
             if (cameraList.Count <= 0)
@@ -44,13 +44,13 @@
             
             var player = playerList[0];
             var character = _entityManager.GetComponent<Character>(player);
-            if (character.transform == null)
+            if (character.Transform == null)
             {
                 return;
             }
 
-            cameraControl.cameraState.Follow = character.transform;
-            cameraControl.cameraState.LookAt = character.transform;
+            cameraControl.cameraState.Follow = character.Transform;
+            cameraControl.cameraState.LookAt = character.Transform;
         }
 
         public override void Destroy()
