@@ -12,7 +12,7 @@ namespace Battle
             _entityManager = entityManager;
             _hitQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(SkillBase), typeof(Hit), typeof(Attribute)}
+                All = new []{typeof(SkillBase), typeof(Hit)}
             });
         }
 
@@ -29,6 +29,18 @@ namespace Battle
         private void TaskEffectHit(int entityId)
         {
             var skillBase = _entityManager.GetComponent<SkillBase>(entityId);
+            if (!skillBase.IsActivate)
+            {
+                // 技能未激活
+                return;
+            }
+
+            if (skillBase.IsTakeOver)
+            {
+                // 技能生效结束
+                return;
+            }
+
             if (!skillBase.IsTakeEffect)
             {
                 // 技能未生效不做处理
@@ -36,6 +48,8 @@ namespace Battle
             }
 
             var hit = _entityManager.GetComponent<Hit>(entityId);
+            var releaseAttr = _entityManager.GetComponent<Attribute>(skillBase.Release);
+            var value = (int) (hit.AddValue * releaseAttr.attack);
 
             skillBase.TargetList.ForEach(target =>
             {
@@ -43,11 +57,14 @@ namespace Battle
                 _entityManager.AddComponent(hurt, new Hurt
                 {
                     Release = skillBase.Release,
-                    Target = target
+                    Target = target,
+                    Value = value
                 });
             });
 
             hit.IsTaskEffect = true;
+
+            skillBase.IsTakeOver = true;
         }
     }
 }

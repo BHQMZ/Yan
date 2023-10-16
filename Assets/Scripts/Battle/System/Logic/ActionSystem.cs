@@ -36,13 +36,13 @@ namespace Battle
                     return;
                 }
 
-                action.CurAttack.CurFrame++;
-
                 if (!action.CurAttack.IsLoop && action.CurAttack.CurFrame == action.CurAttack.Frame)
                 {
                     // 当前动作播放完毕
                     action.CurAttack = default;
                 }
+
+                action.CurAttack.CurFrame++;
             });
         }
 

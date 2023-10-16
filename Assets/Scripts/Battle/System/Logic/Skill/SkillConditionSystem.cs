@@ -36,14 +36,22 @@ namespace Battle
             }
 
             var release = _entityManager.GetComponent<Release>(entityId);
-            if (release.IsRelease)
+            if (!release.IsRelease)
             {
-                // 已释放不做处理
+                // 未释放不做处理
                 return;
             }
 
-            release.IsRelease = true;
+            release.IsRelease = false;
+            ActivateSkill(skillBase);
+        }
+
+        private void ActivateSkill(SkillBase skillBase)
+        {
             skillBase.IsActivate = true;
+            skillBase.IsTakeEffect = false;
+            skillBase.IsTriggerOver = false;
+            skillBase.IsTakeOver = false;
         }
     }
 }

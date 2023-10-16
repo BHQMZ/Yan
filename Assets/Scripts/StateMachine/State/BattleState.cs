@@ -39,7 +39,6 @@ namespace StateMachine.State
                 entityManager.AddComponent(player, new Asset{
                     assetName = "Hero"
                 });
-
                 var heroAction = new Action();
                 heroAction.ActionDataList.Add(new AttackActionData
                 {
@@ -47,6 +46,7 @@ namespace StateMachine.State
                     Frame = 60
                 });
                 entityManager.AddComponent(player, heroAction);
+
 
                 var monster = entityManager.CreateEntity();
                 entityManager.AddComponent(monster, new Transform());
@@ -66,9 +66,20 @@ namespace StateMachine.State
                 monsterAction.ActionDataList.Add(new AttackActionData
                 {
                     Attack = AttackActionEnum.Attack,
-                    Frame = 60
+                    Frame = 60,
+                    EventFrame = 37
                 });
                 entityManager.AddComponent(monster, monsterAction);
+                entityManager.AddComponent(monster, new ReleaseSkillControl
+                {
+                    SkillList = new []
+                    {
+                        new ReleaseSkillData
+                        {
+                            Skill = SkillManager.CreateSkill(entityManager)
+                        }
+                    }
+                });
 
 
                 var camera = entityManager.CreateEntity();

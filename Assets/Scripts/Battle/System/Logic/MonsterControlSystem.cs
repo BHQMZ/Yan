@@ -13,7 +13,7 @@ namespace Battle
             _entityManager = entityManager;
             _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(MonsterControl), typeof(Transform)}
+                All = new []{typeof(MonsterControl), typeof(Transform), typeof(ReleaseSkillControl)}
             });
             
             _playerQuery = _entityManager.AddWithComponent(new EntityQueryDesc
@@ -33,14 +33,14 @@ namespace Battle
                 {
                     var targetDistance = 0f;
                     var targetId = 0;
-                    _playerQuery.GetEntityIdList().ForEach(entityId =>
+                    _playerQuery.GetEntityIdList().ForEach(playerEntityId =>
                     {
-                        var playerTransform = _entityManager.GetComponent<Transform>(entityId);
+                        var playerTransform = _entityManager.GetComponent<Transform>(playerEntityId);
                         var newDistance = Vector3.Distance(playerTransform.Position, transform.Position);
                         if (targetId == 0 || targetDistance > newDistance)
                         {
                             targetDistance = newDistance;
-                            targetId = entityId;
+                            targetId = playerEntityId;
                         }
                     });
                     if (targetId == 0)
@@ -68,11 +68,13 @@ namespace Battle
                 }
                 else
                 {
-                    action.MoveState = MoveStateEnum.Null;
-                    if (action.CurAttack.Attack == AttackActionEnum.Null)
+                    if (monsterControl.TargetId > 0)
                     {
-                        action.TriggerAttack = AttackActionEnum.Attack;
+                        var releaseSkillControl = _entityManager.GetComponent<ReleaseSkillControl>(entityId);
+                        releaseSkillControl.Target = monsterControl.TargetId;
+                        releaseSkillControl.TriggerSkillIndex = 1;
                     }
+                    action.MoveState = MoveStateEnum.Null;
                     transform.Velocity = Vector3.zero;
                 }
             });

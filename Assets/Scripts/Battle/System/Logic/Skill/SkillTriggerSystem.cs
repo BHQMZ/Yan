@@ -12,7 +12,7 @@ namespace Battle
             _entityManager = entityManager;
             _actionQuery = entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(SkillBase), typeof(TriggerAction), typeof(Action)}
+                All = new []{typeof(SkillBase), typeof(TriggerAction)}
             });
         }
 
@@ -29,9 +29,15 @@ namespace Battle
         private void ActionTrigger(int entityId)
         {
             var skillBase = _entityManager.GetComponent<SkillBase>(entityId);
-            if (skillBase.IsTakeEffect)
+            if (skillBase.IsTriggerOver)
             {
-                // 已生效不处理
+                // 触发已结束
+                return;
+            }
+
+            if (!skillBase.IsActivate)
+            {
+                // 技能未激活
                 return;
             }
 
@@ -41,14 +47,26 @@ namespace Battle
             if (!triggerAction.IsSetAction)
             {
                 // 设置施法者动作
-                action.TriggerAttack = triggerAction.AttackActionEnum;
+                action.TriggerAttack = triggerAction.AttackAction;
                 triggerAction.IsSetAction = true;
             }
 
-            if (action.CurAttack.CurFrame == action.CurAttack.EventFrame)
+            if (action.CurAttack.Attack != triggerAction.AttackAction)
+            {
+                return;
+            }
+
+            if (action.CurAttack.CurFrame >= action.CurAttack.EventFrame)
             {
                 // 触发动作事件帧
                 skillBase.IsTakeEffect = true;
+            }
+
+            if (action.CurAttack.CurFrame >= action.CurAttack.Frame)
+            {
+                // 触发结束
+                skillBase.IsTriggerOver = true;
+                triggerAction.IsSetAction = false;
             }
         }
     }

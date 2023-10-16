@@ -30,7 +30,6 @@ namespace Battle
                 var animatorControl = _entityManager.GetComponent<AnimatorControl>(entityId);
                 if (action.CurAttack.Attack != AttackActionEnum.Null && animatorControl.LastAttackStep != action.TriggerAttackStep)
                 {
-                    Debug.Log("攻击");
                     animatorControl.LastAttackStep = action.TriggerAttackStep;
                     character.Animator.SetTrigger(AnimatorControl.AttackActionMap[action.CurAttack.Attack]);
                 }

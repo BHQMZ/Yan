@@ -15,5 +15,10 @@ namespace Battle
         public bool IsActivate;
         // 是否生效
         public bool IsTakeEffect;
+        
+        // 是否触发完成
+        public bool IsTriggerOver;
+        // 是否生效完成
+        public bool IsTakeOver;
     }
 }
