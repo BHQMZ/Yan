@@ -16,10 +16,7 @@ namespace Battle
             {
                 AttackAction = AttackActionEnum.Attack
             });
-            entityManager.AddComponent(entityId, new Hit
-            {
-                AddValue = 1f
-            });
+            entityManager.AddComponent(entityId, new RangeHit());
 
             return entityId;
         }
@@ -35,6 +32,7 @@ namespace Battle
             });
             entityManager.AddComponent(entityId, new TriggerBounds
             {
+                TargetCount = 1
             });
             entityManager.AddComponent(entityId, new Hit
             {
@@ -42,7 +40,17 @@ namespace Battle
             });
 
             entityManager.AddComponent(entityId, new Transform());
-            entityManager.AddComponent(entityId, new Bounds());
+            entityManager.AddComponent(entityId, new Bounds
+            {
+                Query = entityManager.AddWithComponent(new EntityQueryDesc
+                {
+                    All = new[] { typeof(PlayerControl) }
+                })
+            });
+            entityManager.AddComponent(entityId, new Ball
+            {
+                Radius = 10
+            });
 
             return entityId;
         }

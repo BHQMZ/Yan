@@ -2,6 +2,6 @@
 {
     public class Ball : Component
     {
-        public float radius;
+        public float Radius;
     }
 }

@@ -4,6 +4,7 @@ namespace Battle
 {
     public class Bounds : Component
     {
-        public List<int> entityList;
+        public EntityQuery Query;
+        public List<int> EntityList = new();
     }
 }

@@ -25,6 +25,7 @@ namespace Battle
         {
             _releaseQuery.GetEntityIdList().ForEach(ReleaseActivate);
             _durationQuery.GetEntityIdList().ForEach(DurationActivate);
+            _entityManager.UpdateWithComponent();
         }
 
         public override void Destroy()
@@ -56,7 +57,25 @@ namespace Battle
         private void DurationActivate(int entityId)
         {
             var skillBase = _entityManager.GetComponent<SkillBase>(entityId);
+            if (skillBase.IsActivate)
+            {
+                // 已经激活不做处理
+                return;
+            }
             
+            var duration = _entityManager.GetComponent<Duration>(entityId);
+            if (duration.CurTime >= duration.Time)
+            {
+                _entityManager.DestroyEntity(entityId);
+                return;
+            }
+            
+            // 每次重置目标
+            skillBase.TargetList.Clear();
+            // 激活
+            ActivateSkill(skillBase);
+
+            duration.CurTime++;
         }
 
         private void ActivateSkill(SkillBase skillBase)

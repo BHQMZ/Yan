@@ -4,5 +4,7 @@
     {
         // 持续时间（帧）
         public int Time;
+        // 当前时间（帧）
+        public int CurTime;
     }
 }

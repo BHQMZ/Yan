@@ -7,7 +7,6 @@ namespace Battle
         private EntityManager _entityManager;
         private EntityQuery _boxQuery;
         private EntityQuery _ballQuery;
-        private EntityQuery _entityQuery;
         
         public override void Init(EntityManager entityManager)
         {
@@ -21,48 +20,48 @@ namespace Battle
             {
                 All = new []{typeof(Ball), typeof(Bounds), typeof(Transform)}
             });
-            
-            _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
-            {
-                All = new []{typeof(Transform)}
-            });
         }
 
         public override void Update(int step)
         {
-            _entityQuery.GetEntityIdList().ForEach(entityId =>
-            {
-                var transform = _entityManager.GetComponent<Transform>(entityId);
-                _ballQuery.GetEntityIdList().ForEach(ballEntityId =>
-                {
-                    var ball = _entityManager.GetComponent<Ball>(ballEntityId);
-                    if (ball.radius <= 0)
-                    {
-                        return;
-                    }
-
-                    var bounds = _entityManager.GetComponent<Bounds>(ballEntityId);
-                    var ballTransform = _entityManager.GetComponent<Transform>(ballEntityId);
-                    if (Vector3.Distance(transform.Position, ballTransform.Position) <= ball.radius)
-                    {
-                        if (!bounds.entityList.Contains(entityId))
-                        {
-                            bounds.entityList.Add(entityId);
-                        }
-                    }
-                    else
-                    {
-                        if (bounds.entityList.Contains(entityId))
-                        {
-                            bounds.entityList.Remove(entityId);
-                        }
-                    }
-                });
-            });
+            _ballQuery.GetEntityIdList().ForEach(BallBounds);
         }
 
         public override void Destroy()
         {
+            _entityManager.RemoveWithComponent(_boxQuery.desc);
+            _entityManager.RemoveWithComponent(_ballQuery.desc);
+        }
+
+        private void BallBounds(int ballEntityId)
+        {
+            var ball = _entityManager.GetComponent<Ball>(ballEntityId);
+            if (ball.Radius <= 0)
+            {
+                return;
+            }
+
+            var bounds = _entityManager.GetComponent<Bounds>(ballEntityId);
+            var ballTransform = _entityManager.GetComponent<Transform>(ballEntityId);
+            
+            bounds.Query.GetEntityIdList().ForEach(entityId =>
+            {
+                var transform = _entityManager.GetComponent<Transform>(entityId);
+                if (Vector3.Distance(transform.Position, ballTransform.Position) <= ball.Radius)
+                {
+                    if (!bounds.EntityList.Contains(entityId))
+                    {
+                        bounds.EntityList.Add(entityId);
+                    }
+                }
+                else
+                {
+                    if (bounds.EntityList.Contains(entityId))
+                    {
+                        bounds.EntityList.Remove(entityId);
+                    }
+                }
+            });
         }
     }
 }
