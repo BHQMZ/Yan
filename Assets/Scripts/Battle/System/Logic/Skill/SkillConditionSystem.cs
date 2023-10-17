@@ -6,6 +6,7 @@ namespace Battle
     {
         private EntityManager _entityManager;
         private EntityQuery _releaseQuery;
+        private EntityQuery _durationQuery;
 
         public override void Init(EntityManager entityManager)
         {
@@ -14,16 +15,22 @@ namespace Battle
             {
                 All = new []{typeof(SkillBase), typeof(Release)}
             });
+            _durationQuery = entityManager.AddWithComponent(new EntityQueryDesc
+            {
+                All = new []{typeof(SkillBase), typeof(Duration)}
+            });
         }
 
         public override void Update(int step)
         {
             _releaseQuery.GetEntityIdList().ForEach(ReleaseActivate);
+            _durationQuery.GetEntityIdList().ForEach(DurationActivate);
         }
 
         public override void Destroy()
         {
             _entityManager.RemoveWithComponent(_releaseQuery.desc);
+            _entityManager.RemoveWithComponent(_durationQuery.desc);
         }
 
         private void ReleaseActivate(int entityId)
@@ -44,6 +51,12 @@ namespace Battle
 
             release.IsRelease = false;
             ActivateSkill(skillBase);
+        }
+
+        private void DurationActivate(int entityId)
+        {
+            var skillBase = _entityManager.GetComponent<SkillBase>(entityId);
+            
         }
 
         private void ActivateSkill(SkillBase skillBase)

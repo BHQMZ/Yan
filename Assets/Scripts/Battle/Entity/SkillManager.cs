@@ -23,5 +23,28 @@ namespace Battle
 
             return entityId;
         }
+        
+        public static int CreateRangeSkill(EntityManager entityManager)
+        {
+            var entityId = entityManager.CreateEntity();
+
+            entityManager.AddComponent(entityId, new SkillBase());
+            entityManager.AddComponent(entityId, new Duration
+            {
+                Time = 1
+            });
+            entityManager.AddComponent(entityId, new TriggerBounds
+            {
+            });
+            entityManager.AddComponent(entityId, new Hit
+            {
+                AddValue = 1f
+            });
+
+            entityManager.AddComponent(entityId, new Transform());
+            entityManager.AddComponent(entityId, new Bounds());
+
+            return entityId;
+        }
     }
 }
