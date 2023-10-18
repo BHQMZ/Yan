@@ -9,7 +9,7 @@ AnimatorController:
   m_Name: PirateGirl-AnimController
   serializedVersion: 5
   m_AnimatorParameters:
-  - m_Name: Shoot
+  - m_Name: Attack
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
@@ -279,7 +279,7 @@ AnimatorStateTransition:
   m_Name: 
   m_Conditions:
   - m_ConditionMode: 1
-    m_ConditionEvent: Shoot
+    m_ConditionEvent: Attack
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 0}
   m_DstState: {fileID: 1102956360218751900}
@@ -544,7 +544,7 @@ AnimatorStateMachine:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: ShootLayer
+  m_Name: Attack Layer
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 1102956360218751900}

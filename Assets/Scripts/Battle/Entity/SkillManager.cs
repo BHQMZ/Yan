@@ -54,5 +54,67 @@ namespace Battle
 
             return entityId;
         }
+        
+        public static int CreateShootSkill(EntityManager entityManager)
+        {
+            var entityId = entityManager.CreateEntity();
+            
+            entityManager.AddComponent(entityId, new SkillBase());
+            entityManager.AddComponent(entityId, new Release());
+            entityManager.AddComponent(entityId, new TriggerAction
+            {
+                AttackAction = AttackActionEnum.Attack
+            });
+            entityManager.AddComponent(entityId, new CreateBullet());
+
+            return entityId;
+        }
+        
+        public static int CreateBulletSkill(EntityManager entityManager)
+        {
+            var entityId = entityManager.CreateEntity();
+
+            entityManager.AddComponent(entityId, new SkillBase());
+            entityManager.AddComponent(entityId, new Count()
+            {
+                ActivateCount = 1
+            });
+            entityManager.AddComponent(entityId, new TriggerBounds
+            {
+                TargetCount = 1,
+                IsHaveTargetTrigger = true
+            });
+            entityManager.AddComponent(entityId, new Hit
+            {
+                AddValue = 1f
+            });
+
+            entityManager.AddComponent(entityId, new Transform());
+            entityManager.AddComponent(entityId, new Bounds
+            {
+                Query = entityManager.AddWithComponent(new EntityQueryDesc
+                {
+                    All = new[] { typeof(MonsterControl) }
+                })
+            });
+            entityManager.AddComponent(entityId, new Ball
+            {
+                Radius = 5
+            });
+            entityManager.AddComponent(entityId, new MoveControl
+            {
+                Speed = 2,
+                Time = 100,
+                IsDestroyEntity = true
+            });
+            entityManager.AddComponent(entityId, new Asset
+            {
+                AssetName = "Bullet"
+            });
+            entityManager.AddComponent(entityId, new Bullet());
+            entityManager.AddComponent(entityId, new Character());
+
+            return entityId;
+        }
     }
 }

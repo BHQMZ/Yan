@@ -4,8 +4,8 @@ namespace Battle
 {
     public class Asset : Component
     {
-        public string assetName;
-        public GameObject go;
-        public bool isLoading;
+        public string AssetName;
+        public GameObject GO;
+        public bool IsLoading;
     }
 }

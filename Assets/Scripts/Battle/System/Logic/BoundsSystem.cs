@@ -47,7 +47,7 @@ namespace Battle
             bounds.Query.GetEntityIdList().ForEach(entityId =>
             {
                 var transform = _entityManager.GetComponent<Transform>(entityId);
-                if (Vector3.Distance(transform.Position, ballTransform.Position) <= ball.Radius)
+                if (Vector3.Distance(new Vector3(transform.Position.x, 0, transform.Position.z), new Vector3(ballTransform.Position.x, 0, ballTransform.Position.z)) <= ball.Radius)
                 {
                     if (!bounds.EntityList.Contains(entityId))
                     {

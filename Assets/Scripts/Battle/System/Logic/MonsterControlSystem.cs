@@ -50,32 +50,40 @@ namespace Battle
                     monsterControl.TargetId = targetId;
                 }
 
-                var playerTransform = _entityManager.GetComponent<Transform>(monsterControl.TargetId);
-                var distance = Vector3.Distance(playerTransform.Position, transform.Position);
+                // var playerTransform = _entityManager.GetComponent<Transform>(monsterControl.TargetId);
+                var targetPosition = Vector3.zero;
+                var distance = Vector3.Distance(targetPosition, transform.Position);
                 var action = _entityManager.GetComponent<Action>(entityId);
-                if (distance > 10)
+                var velocity = Vector3.zero;
+                if (distance > 1f)
                 {
                     action.MoveState = MoveStateEnum.Walk;
-                    transform.Velocity = (playerTransform.Position - transform.Position).normalized * 0.5f;
-                    if (transform.Velocity.x > 0)
-                    {
-                        transform.IsRight = true;
-                    }
-                    else if (transform.Velocity.x < 0)
-                    {
-                        transform.IsRight = false;
-                    }
+                    velocity += (targetPosition - transform.Position).normalized * 0.5f;
                 }
                 else
                 {
-                    if (monsterControl.TargetId > 0)
-                    {
-                        var releaseSkillControl = _entityManager.GetComponent<ReleaseSkillControl>(entityId);
-                        releaseSkillControl.Target = monsterControl.TargetId;
-                        releaseSkillControl.TriggerSkillIndex = 1;
-                    }
+                    // if (monsterControl.TargetId > 0)
+                    // {
+                    //     var releaseSkillControl = _entityManager.GetComponent<ReleaseSkillControl>(entityId);
+                    //     releaseSkillControl.Target = monsterControl.TargetId;
+                    //     releaseSkillControl.TriggerSkillIndex = 1;
+                    // }
                     action.MoveState = MoveStateEnum.Null;
-                    transform.Velocity = Vector3.zero;
+                    velocity = Vector3.zero;
+                }
+                
+                if (monsterControl.Velocity != velocity)
+                {
+                    transform.Velocity -= monsterControl.Velocity - velocity;
+                    if (velocity.x > 0)
+                    {
+                        transform.IsRight = true;
+                    }
+                    else if (velocity.x < 0)
+                    {
+                        transform.IsRight = false;
+                    }
+                    monsterControl.Velocity = velocity;
                 }
             });
         }

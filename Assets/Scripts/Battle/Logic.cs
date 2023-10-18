@@ -9,6 +9,7 @@ namespace Battle
         public void Open(EntityManager entityManager)
         {
             _systems.Add(new BoundsSystem());
+            _systems.Add(new MoveControlSystem());
             _systems.Add(new MonsterControlSystem());
             _systems.Add(new ReleaseSkillControlSystem());
             _systems.Add(new SkillBaseSystem());

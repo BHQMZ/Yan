@@ -13,6 +13,9 @@ namespace Battle
         
         private readonly Dictionary<int, EntityQuery> _entityQueryMap = new();
         private readonly Dictionary<int, int> _entityQueryUseCountMap = new();
+        
+        private readonly List<int> _destroyEntityIds = new();
+        private readonly Dictionary<int, EntityQuery> _destroyEntityQueryMap = new();
 
         private bool _isUpdateQuery;
 
@@ -35,10 +38,30 @@ namespace Battle
         public void DestroyEntity(int entityId)
         {
             _entityIds.Remove(entityId);
+
+            AddDestroyEntity(entityId);
+            // 组件变动，需要重新更新
+            _isUpdateQuery = true;
+        }
+
+        private void AddDestroyEntity(int entityId)
+        {
+            _destroyEntityIds.Add(entityId);
+        }
+
+        private void RemoveDestroyEntity(int entityId)
+        {
+            _destroyEntityIds.Remove(entityId);
             // 清除实体关联组件
             RemoveEntityComponentAll(entityId);
-
+            // 回收的Id
             _entityIdStack.Push(entityId);
+        }
+
+        public void RemoveAllDestroyEntity()
+        {
+            _destroyEntityIds.ForEach(RemoveDestroyEntity);
+            _destroyEntityIds.Clear();
         }
 
         public void AddComponent(int entityId, Component component)
@@ -178,6 +201,16 @@ namespace Battle
             }
         }
 
+        public EntityQuery AddDestroyWithComponent(EntityQueryDesc desc)
+        {
+            var key = desc.GetKey();
+            var newQuery = new EntityQuery(desc);
+            newQuery.UpdateEntityList(this);
+            _destroyEntityQueryMap[key] = newQuery;
+            
+            return newQuery;
+        }
+
         public void UpdateWithComponent()
         {
             if (!_isUpdateQuery)
@@ -186,7 +219,11 @@ namespace Battle
             }
             foreach (var valuePair in _entityQueryMap)
             {
-                valuePair.Value.UpdateEntityList(this);
+                valuePair.Value.UpdateEntityList(this, _entityIds);
+            }
+            foreach (var valuePair in _destroyEntityQueryMap)
+            {
+                valuePair.Value.UpdateEntityList(this, _destroyEntityIds);
             }
         }
 

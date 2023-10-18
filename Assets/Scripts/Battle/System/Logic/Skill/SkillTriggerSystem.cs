@@ -96,6 +96,11 @@ namespace Battle
             var triggerBounds = _entityManager.GetComponent<TriggerBounds>(entityId);
             var bounds = _entityManager.GetComponent<Bounds>(entityId);
             var maxCount = Math.Min(bounds.EntityList.Count, triggerBounds.TargetCount);
+            if (triggerBounds.IsHaveTargetTrigger && maxCount <= 0)
+            {
+                // 需要有目标才触发
+                return;
+            }
             for (int i = 0; i < maxCount; i++)
             {
                 skillBase.TargetList.Add(bounds.EntityList[i]);

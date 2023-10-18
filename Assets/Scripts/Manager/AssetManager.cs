@@ -8,6 +8,7 @@ namespace Manager
     {
         public const string CHARACTER_ASSETS = "Assets/Lib/Character/";
         public const string CINEMACHINE_ASSETS = "Assets/Lib/Cinemachine/";
+        public const string BULLET_ASSETS = "Assets/Lib/Effect/Bullet/";
         
         public static void LoadAssetAsync<T>(string assetPath, Action<T> callback)
         {

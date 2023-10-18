@@ -55,9 +55,9 @@ namespace Battle
                     action.MoveState = MoveStateEnum.Null;
                 }
 
-                if (playerControl.velocity != velocity)
+                if (playerControl.Velocity != velocity)
                 {
-                    transform.Velocity -= playerControl.velocity - velocity;
+                    transform.Velocity -= playerControl.Velocity - velocity;
                     if (velocity.x > 0)
                     {
                         transform.IsRight = true;
@@ -66,7 +66,16 @@ namespace Battle
                     {
                         transform.IsRight = false;
                     }
-                    playerControl.velocity = velocity;
+                    playerControl.Velocity = velocity;
+                }
+
+                if (Input.GetKey("f"))
+                {
+                    var releaseSkillControl = _entityManager.GetComponent<ReleaseSkillControl>(entityId);
+                    if (releaseSkillControl.CurSkillData.Skill <= 0)
+                    {
+                        releaseSkillControl.TriggerSkillIndex = 1;
+                    }
                 }
             });
         }

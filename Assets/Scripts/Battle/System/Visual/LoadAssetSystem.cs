@@ -10,6 +10,8 @@ namespace Battle
         private EntityManager _entityManager;
         private EntityQuery _characterQuery;
         private EntityQuery _cameraQuery;
+        private EntityQuery _bulletQuery;
+        private EntityQuery _destroyAssetQuery;
         
         public override void Init(EntityManager entityManager)
         {
@@ -17,12 +19,20 @@ namespace Battle
 
             _characterQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(Asset), typeof(Character)}
+                All = new []{typeof(Asset), typeof(Character), typeof(Hero)}
             });
-            
             _cameraQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
                 All = new []{typeof(Asset), typeof(CameraControl)}
+            });
+            _bulletQuery = _entityManager.AddWithComponent(new EntityQueryDesc
+            {
+                All = new []{typeof(Asset), typeof(Character), typeof(Bullet)}
+            });
+
+            _destroyAssetQuery = _entityManager.AddDestroyWithComponent(new EntityQueryDesc
+            {
+                All = new[] { typeof(Asset) }
             });
         }
 
@@ -58,27 +68,54 @@ namespace Battle
                     cameraControl.cameraState = go.GetComponentInChildren<CinemachineStateDrivenCamera>();
                 });
             });
+            
+            _bulletQuery.GetEntityIdList().ForEach(entityId =>
+            {
+                var bulletCharacter = _entityManager.GetComponent<Character>(entityId);
+                if (bulletCharacter.Transform)
+                {
+                    return;
+                }
+
+                LoadAsset(entityId, AssetManager.BULLET_ASSETS, go =>
+                {
+                    bulletCharacter.Transform = go.transform;
+                });
+            });
+            
+            _destroyAssetQuery.GetEntityIdList().ForEach(entityId =>
+            {
+                var asset = _entityManager.GetComponent<Asset>(entityId);
+                if (asset.GO == null)
+                {
+                    return;
+                }
+                
+                GameObject.Destroy(asset.GO);
+                asset.GO = null;
+            });
         }
 
         public override void Destroy()
         {
             _entityManager.RemoveWithComponent(_characterQuery.desc);
             _entityManager.RemoveWithComponent(_cameraQuery.desc);
+            _entityManager.RemoveWithComponent(_bulletQuery.desc);
         }
 
         private void LoadAsset(int entityId, string assetPath, Action<GameObject> callback)
         {
             var asset = _entityManager.GetComponent<Asset>(entityId);
 
-            if (asset.go == null && !asset.isLoading && !string.IsNullOrEmpty(asset.assetName))
+            if (asset.GO == null && !asset.IsLoading && !string.IsNullOrEmpty(asset.AssetName))
             {
-                asset.isLoading = true;
-                AssetManager.LoadAssetAsync<GameObject>(assetPath + asset.assetName, go =>
+                asset.IsLoading = true;
+                AssetManager.LoadAssetAsync<GameObject>(assetPath + asset.AssetName, go =>
                 {
-                    asset.isLoading = false;
-                    asset.go = GameObject.Instantiate(go);
+                    asset.IsLoading = false;
+                    asset.GO = GameObject.Instantiate(go);
                     
-                    callback.Invoke(asset.go);
+                    callback.Invoke(asset.GO);
                 });
             }
         }
