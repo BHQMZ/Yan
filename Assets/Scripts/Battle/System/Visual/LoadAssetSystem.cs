@@ -11,7 +11,6 @@ namespace Battle
         private EntityQuery _characterQuery;
         private EntityQuery _cameraQuery;
         private EntityQuery _bulletQuery;
-        private EntityQuery _destroyAssetQuery;
         
         public override void Init(EntityManager entityManager)
         {
@@ -30,10 +29,7 @@ namespace Battle
                 All = new []{typeof(Asset), typeof(Character), typeof(Bullet)}
             });
 
-            _destroyAssetQuery = _entityManager.AddDestroyWithComponent(new EntityQueryDesc
-            {
-                All = new[] { typeof(Asset) }
-            });
+            _entityManager.AddRemoveComponentEvent<Asset>(DestroyAsset);
         }
 
         public override void Update(int step, float deltaTime)
@@ -82,18 +78,6 @@ namespace Battle
                     bulletCharacter.Transform = go.transform;
                 });
             });
-            
-            _destroyAssetQuery.GetEntityIdList().ForEach(entityId =>
-            {
-                var asset = _entityManager.GetComponent<Asset>(entityId);
-                if (asset.GO == null)
-                {
-                    return;
-                }
-                
-                GameObject.Destroy(asset.GO);
-                asset.GO = null;
-            });
         }
 
         public override void Destroy()
@@ -118,6 +102,17 @@ namespace Battle
                     callback.Invoke(asset.GO);
                 });
             }
+        }
+
+        private void DestroyAsset(Component component)
+        {
+            if (component is not Asset asset || asset.GO == null)
+            {
+                return;
+            }
+                
+            GameObject.Destroy(asset.GO);
+            asset.GO = null;
         }
     }
 }

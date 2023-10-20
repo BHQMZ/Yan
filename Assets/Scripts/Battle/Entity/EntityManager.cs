@@ -13,9 +13,9 @@ namespace Battle
         
         private readonly Dictionary<int, EntityQuery> _entityQueryMap = new();
         private readonly Dictionary<int, int> _entityQueryUseCountMap = new();
-        
-        private readonly List<int> _destroyEntityIds = new();
-        private readonly Dictionary<int, EntityQuery> _destroyEntityQueryMap = new();
+
+        private readonly Dictionary<Type, List<Component>> _removeComponentMap = new();
+        private readonly Dictionary<Type, List<Action<Component>>> _removeComponentEvent = new();
 
         private bool _isUpdateQuery;
 
@@ -39,29 +39,8 @@ namespace Battle
         {
             _entityIds.Remove(entityId);
 
-            AddDestroyEntity(entityId);
-            // 组件变动，需要重新更新
-            _isUpdateQuery = true;
-        }
-
-        private void AddDestroyEntity(int entityId)
-        {
-            _destroyEntityIds.Add(entityId);
-        }
-
-        private void RemoveDestroyEntity(int entityId)
-        {
-            _destroyEntityIds.Remove(entityId);
             // 清除实体关联组件
             RemoveEntityComponentAll(entityId);
-            // 回收的Id
-            _entityIdStack.Push(entityId);
-        }
-
-        public void RemoveAllDestroyEntity()
-        {
-            _destroyEntityIds.ForEach(RemoveDestroyEntity);
-            _destroyEntityIds.Clear();
         }
 
         public void AddComponent(int entityId, Component component)
@@ -101,16 +80,28 @@ namespace Battle
 
             var componentType = typeof(T);
 
-            if (components.ContainsKey(componentType))
+            if (!components.ContainsKey(componentType))
             {
-                components.Remove(componentType);
-                // 组件变动，需要重新更新
-                _isUpdateQuery = true;
+                return;
             }
+            AddRemoveComponent(componentType, components[componentType]);
+            components.Remove(componentType);
+            // 组件变动，需要重新更新
+            _isUpdateQuery = true;
+        }
+
+        private void AddRemoveComponent(Type componentType, Component component)
+        {
+            if (!_removeComponentMap.ContainsKey(componentType))
+            {
+                _removeComponentMap[componentType] = new List<Component>();
+            }
+            
+            _removeComponentMap[componentType].Add(component);
         }
 
         // 清除实体关联的全部组件
-        public void RemoveEntityComponentAll(int entityId)
+        private void RemoveEntityComponentAll(int entityId)
         {
             if (!_entityComponentMap.ContainsKey(entityId))
             {
@@ -118,12 +109,17 @@ namespace Battle
             }
             
             var components = _entityComponentMap[entityId];
-            if (components.Count > 0)
+            if (components.Count <= 0)
             {
-                components.Clear();
-                // 组件变动，需要重新更新
-                _isUpdateQuery = true;
+                return;
             }
+            foreach (var keyValuePair in components)
+            {
+                AddRemoveComponent(keyValuePair.Key, keyValuePair.Value);
+            }
+            components.Clear();
+            // 组件变动，需要重新更新
+            _isUpdateQuery = true;
         }
         
         // 获取指定类型的组件
@@ -201,16 +197,6 @@ namespace Battle
             }
         }
 
-        public EntityQuery AddDestroyWithComponent(EntityQueryDesc desc)
-        {
-            var key = desc.GetKey();
-            var newQuery = new EntityQuery(desc);
-            newQuery.UpdateEntityList(this);
-            _destroyEntityQueryMap[key] = newQuery;
-            
-            return newQuery;
-        }
-
         public void UpdateWithComponent()
         {
             if (!_isUpdateQuery)
@@ -221,15 +207,30 @@ namespace Battle
             {
                 valuePair.Value.UpdateEntityList(this, _entityIds);
             }
-            foreach (var valuePair in _destroyEntityQueryMap)
+            foreach (var keyValuePair in _removeComponentMap)
             {
-                valuePair.Value.UpdateEntityList(this, _destroyEntityIds);
+                if (_removeComponentEvent.TryGetValue(keyValuePair.Key, out var value))
+                {
+                    value.ForEach(action => keyValuePair.Value.ForEach(action.Invoke));
+                }
+                keyValuePair.Value.Clear();
             }
         }
 
         public List<int> GetEntityIdAll()
         {
             return _entityIds;
+        }
+
+        public void AddRemoveComponentEvent<T>(Action<Component> action) where T : Component
+        {
+            var componentType = typeof(T);
+            if (!_removeComponentEvent.ContainsKey(componentType))
+            {
+                _removeComponentEvent[componentType] = new List<Action<Component>>();
+            }
+            
+            _removeComponentEvent[componentType].Add(action);
         }
     }
 }
