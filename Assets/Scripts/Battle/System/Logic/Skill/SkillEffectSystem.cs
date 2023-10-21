@@ -79,8 +79,10 @@ namespace Battle
                     Value = value
                 });
                 // 临时加个击退
-                _entityManager.AddComponent(target, new MoveControl
+                var back = _entityManager.CreateEntity();
+                _entityManager.AddComponent(back, new MoveControl
                 {
+                    Target = target,
                     Direction = moveControl.Direction,
                     Time = 10,
                     Speed = 2
@@ -151,8 +153,11 @@ namespace Battle
             var rangeSkillTransform = _entityManager.GetComponent<Transform>(bulletEntityId);
             rangeSkillTransform.Position = releaseTransform.Position + (releaseTransform.IsRight ? Vector3.right : Vector3.left) * 5 + Vector3.up * 5;
 
+            var createBullet = _entityManager.GetComponent<CreateBullet>(entityId);
             var moveControl = _entityManager.GetComponent<MoveControl>(bulletEntityId);
             moveControl.Direction = releaseTransform.IsRight ? Vector3.right : Vector3.left;
+            moveControl.Speed = createBullet.Speed;
+            moveControl.Time = createBullet.Time;
 
             skillBase.IsTakeOver = true;
         }

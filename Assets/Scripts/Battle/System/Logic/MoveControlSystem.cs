@@ -13,7 +13,7 @@ namespace Battle
             _entityManager = entityManager;
             _entityQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(MoveControl), typeof(Transform)}
+                All = new []{typeof(MoveControl)}
             });
         }
 
@@ -31,18 +31,18 @@ namespace Battle
         private void UpdateMoveControl(int entityId)
         {
             var moveControl = _entityManager.GetComponent<MoveControl>(entityId);
-            var transform = _entityManager.GetComponent<Transform>(entityId);
+            var transform = _entityManager.GetComponent<Transform>(moveControl.Target);
+            if (transform == null)
+            {
+                // 没有目标，或者目标没有Transform组件，直接销毁
+                _entityManager.DestroyEntity(entityId);
+                return;
+            }
             transform.Velocity -= moveControl.Velocity;
             if (moveControl.CurTime >= moveControl.Time)
             {
-                if (moveControl.IsDestroyEntity)
-                {
-                    _entityManager.DestroyEntity(entityId);
-                }
-                else
-                {
-                    _entityManager.RemoveComponent<MoveControl>(entityId);
-                }
+                // 完成控制直接销毁
+                _entityManager.DestroyEntity(entityId);
                 return;
             }
             

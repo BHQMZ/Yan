@@ -14,6 +14,7 @@ namespace Battle
         private readonly Dictionary<int, EntityQuery> _entityQueryMap = new();
         private readonly Dictionary<int, int> _entityQueryUseCountMap = new();
 
+        private readonly List<int> _removeEntityIds = new();
         private readonly Dictionary<Type, List<Component>> _removeComponentMap = new();
         private readonly Dictionary<Type, List<Action<Component>>> _removeComponentEvent = new();
 
@@ -27,9 +28,21 @@ namespace Battle
             }
             return ++_entityIdIndex;
         }
+
+        private void ReleaseEntityId(int entityId)
+        {
+            if (_entityIdStack.Contains(entityId))
+            {
+                return;
+            }
+            _entityIdStack.Push(entityId);
+        }
         
         public int CreateEntity()
         {
+            // 实体变更，需要刷新
+            _isUpdateQuery = true;
+
             var entityId = GetNextEntityId();
             _entityIds.Add(entityId);
             return entityId;
@@ -37,10 +50,13 @@ namespace Battle
 
         public void DestroyEntity(int entityId)
         {
+            // 实体变更，需要刷新
+            _isUpdateQuery = true;
+
             _entityIds.Remove(entityId);
 
-            // 清除实体关联组件
-            RemoveEntityComponentAll(entityId);
+            // 暂存要销毁的实体
+            _removeEntityIds.Add(entityId);
         }
 
         public void AddComponent(int entityId, Component component)
@@ -64,12 +80,10 @@ namespace Battle
             {
                 // 添加新组件
                 components.Add(componentType, component);
-                // 组件变动，需要重新更新
-                _isUpdateQuery = true;
             }
         }
 
-        public void RemoveComponent<T>(int entityId) where T : Component
+        private void RemoveComponent<T>(int entityId) where T : Component
         {
             if (!_entityComponentMap.ContainsKey(entityId))
             {
@@ -86,8 +100,6 @@ namespace Battle
             }
             AddRemoveComponent(componentType, components[componentType]);
             components.Remove(componentType);
-            // 组件变动，需要重新更新
-            _isUpdateQuery = true;
         }
 
         private void AddRemoveComponent(Type componentType, Component component)
@@ -118,8 +130,6 @@ namespace Battle
                 AddRemoveComponent(keyValuePair.Key, keyValuePair.Value);
             }
             components.Clear();
-            // 组件变动，需要重新更新
-            _isUpdateQuery = true;
         }
         
         // 获取指定类型的组件
@@ -203,10 +213,13 @@ namespace Battle
             {
                 return;
             }
-            foreach (var valuePair in _entityQueryMap)
+            // 清除已删除实体关联的组件
+            if (_removeEntityIds.Count > 0)
             {
-                valuePair.Value.UpdateEntityList(this, _entityIds);
+                _removeEntityIds.ForEach(RemoveEntityComponentAll);
+                _removeEntityIds.Clear();
             }
+            // 执行组件销毁相关回调
             foreach (var keyValuePair in _removeComponentMap)
             {
                 if (_removeComponentEvent.TryGetValue(keyValuePair.Key, out var value))
@@ -214,6 +227,11 @@ namespace Battle
                     value.ForEach(action => keyValuePair.Value.ForEach(action.Invoke));
                 }
                 keyValuePair.Value.Clear();
+            }
+            // 更新Query
+            foreach (var valuePair in _entityQueryMap)
+            {
+                valuePair.Value.UpdateEntityList(this, _entityIds);
             }
         }
 

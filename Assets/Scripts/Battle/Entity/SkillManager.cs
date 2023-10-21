@@ -65,7 +65,11 @@ namespace Battle
             {
                 AttackAction = AttackActionEnum.Attack
             });
-            entityManager.AddComponent(entityId, new CreateBullet());
+            entityManager.AddComponent(entityId, new CreateBullet
+            {
+                Speed = 2,
+                Time = 100,
+            });
 
             return entityId;
         }
@@ -103,9 +107,8 @@ namespace Battle
             });
             entityManager.AddComponent(entityId, new MoveControl
             {
-                Speed = 2,
-                Time = 100,
-                IsDestroyEntity = true
+                // 子弹的移动控制直接选自身就好
+                Target = entityId
             });
             entityManager.AddComponent(entityId, new Asset
             {
