@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Battle;
 using Manager;
+using UnityEngine;
+using Transform = Battle.Transform;
 
 namespace StateMachine.State
 {
@@ -29,6 +31,11 @@ namespace StateMachine.State
 
                 var player = entityManager.CreateEntity();
                 entityManager.AddComponent(player, new Transform());
+                entityManager.AddComponent(player, new Ball
+                {
+                    Radius = 5,
+                    Offset = new Vector3(0, 4.5f, 0)
+                });
                 entityManager.AddComponent(player, new Character());
                 entityManager.AddComponent(player, new Hero());
                 entityManager.AddComponent(player, new AnimatorControl());
@@ -64,6 +71,11 @@ namespace StateMachine.State
 
                 var monster = entityManager.CreateEntity();
                 entityManager.AddComponent(monster, new Transform());
+                entityManager.AddComponent(monster, new Ball
+                {
+                    Radius = 5,
+                    Offset = new Vector3(0, 4.5f, 0)
+                });
                 entityManager.AddComponent(monster, new Character());
                 entityManager.AddComponent(monster, new Hero());
                 entityManager.AddComponent(monster, new AnimatorControl());

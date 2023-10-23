@@ -1,67 +1,87 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace Battle
 {
     public class BoundsSystem : System
     {
         private EntityManager _entityManager;
-        private EntityQuery _boxQuery;
+
+        private EntityQuery _boundsBallQuery;
         private EntityQuery _ballQuery;
+        private List<int> _ballList;
         
         public override void Init(EntityManager entityManager)
         {
             _entityManager = entityManager;
-            _boxQuery = _entityManager.AddWithComponent(new EntityQueryDesc
+
+            _boundsBallQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(Box), typeof(Bounds), typeof(Transform)}
+                All = new []{typeof(Bounds), typeof(Ball), typeof(Transform)}
             });
 
             _ballQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(Ball), typeof(Bounds), typeof(Transform)}
+                All = new []{typeof(Ball), typeof(Transform)}
             });
         }
 
         public override void Update(int step)
         {
-            _ballQuery.GetEntityIdList().ForEach(BallBounds);
+            _ballList = _ballQuery.GetEntityIdList();
+            _boundsBallQuery.GetEntityIdList().ForEach(UpdateBoundsBall);
         }
 
         public override void Destroy()
         {
-            _entityManager.RemoveWithComponent(_boxQuery.desc);
-            _entityManager.RemoveWithComponent(_ballQuery.desc);
+            _entityManager.RemoveWithComponent(_boundsBallQuery.desc);
         }
 
-        private void BallBounds(int ballEntityId)
+        private void UpdateBoundsBall(int entityId)
         {
-            var ball = _entityManager.GetComponent<Ball>(ballEntityId);
-            if (ball.Radius <= 0)
+            var bounds = _entityManager.GetComponent<Bounds>(entityId);
+
+            bounds.Query.UpdateEntityList(_entityManager, _ballList);
+            if (bounds.Query.GetEntityIdList().Count <= 0)
             {
                 return;
             }
 
-            var bounds = _entityManager.GetComponent<Bounds>(ballEntityId);
-            var ballTransform = _entityManager.GetComponent<Transform>(ballEntityId);
-            
-            bounds.Query.GetEntityIdList().ForEach(entityId =>
+            bounds.Query.GetEntityIdList().ForEach(checkEntityId =>
             {
-                var transform = _entityManager.GetComponent<Transform>(entityId);
-                if (Vector3.Distance(new Vector3(transform.Position.x, 0, transform.Position.z), new Vector3(ballTransform.Position.x, 0, ballTransform.Position.z)) <= ball.Radius)
+                if (entityId == checkEntityId)
                 {
-                    if (!bounds.EntityList.Contains(entityId))
+                    return;
+                }
+                if (CheckBallAndBall(entityId, checkEntityId))
+                {
+                    if (!bounds.EntityList.Contains(checkEntityId))
                     {
-                        bounds.EntityList.Add(entityId);
+                        bounds.EntityList.Add(checkEntityId);
                     }
                 }
                 else
                 {
-                    if (bounds.EntityList.Contains(entityId))
+                    if (bounds.EntityList.Contains(checkEntityId))
                     {
-                        bounds.EntityList.Remove(entityId);
+                        bounds.EntityList.Remove(checkEntityId);
                     }
                 }
             });
+        }
+
+        /// <summary>
+        /// 圆和圆的碰撞检测
+        /// </summary>
+        private bool CheckBallAndBall(int aEntityId, int bEntityId)
+        {
+            var aBall = _entityManager.GetComponent<Ball>(aEntityId);
+            var aTransform = _entityManager.GetComponent<Transform>(aEntityId);
+            
+            var bBall = _entityManager.GetComponent<Ball>(bEntityId);
+            var bTransform = _entityManager.GetComponent<Transform>(bEntityId);
+
+            return Vector3.Distance(aTransform.Position + aBall.Offset, bTransform.Position + bBall.Offset) <= aBall.Radius + bBall.Radius;
         }
     }
 }

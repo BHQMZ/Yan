@@ -103,7 +103,7 @@ namespace Battle
             });
             entityManager.AddComponent(entityId, new Ball
             {
-                Radius = 5
+                Radius = 1
             });
             entityManager.AddComponent(entityId, new MoveControl
             {
