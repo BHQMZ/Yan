@@ -1,9 +1,12 @@
-﻿namespace Battle
+﻿using UnityEngine;
+
+namespace Battle
 {
     public class Box : Component
     {
-        public float x;
-        public float y;
-        public float z;
+        public float X;
+        public float Y;
+        public float Z;
+        public Vector3 Offset;
     }
 }

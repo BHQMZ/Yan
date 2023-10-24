@@ -216,7 +216,11 @@ namespace Battle
             // 清除已删除实体关联的组件
             if (_removeEntityIds.Count > 0)
             {
-                _removeEntityIds.ForEach(RemoveEntityComponentAll);
+                _removeEntityIds.ForEach(entityId =>
+                {
+                    RemoveEntityComponentAll(entityId);
+                    ReleaseEntityId(entityId);
+                });
                 _removeEntityIds.Clear();
             }
             // 执行组件销毁相关回调
