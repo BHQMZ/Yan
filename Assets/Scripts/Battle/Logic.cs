@@ -5,9 +5,12 @@ namespace Battle
     public class Logic
     {
         private readonly List<System> _systems = new();
+        private EntityManager _entityManager;
 
         public void Open(EntityManager entityManager)
         {
+            _entityManager = entityManager;
+            
             _systems.Add(new BoundsSystem());
             _systems.Add(new MoveControlSystem());
             _systems.Add(new MonsterControlSystem());
@@ -32,6 +35,7 @@ namespace Battle
             {
                 system.Update(step);
             });
+            _entityManager.UpdateWithComponent();
         }
 
         public void Destroy()

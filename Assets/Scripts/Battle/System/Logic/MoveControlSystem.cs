@@ -20,7 +20,6 @@ namespace Battle
         public override void Update(int step)
         {
             _entityQuery.GetEntityIdList().ForEach(UpdateMoveControl);
-            _entityManager.UpdateWithComponent();
         }
 
         public override void Destroy()

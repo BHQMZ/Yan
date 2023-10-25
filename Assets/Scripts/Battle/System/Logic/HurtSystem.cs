@@ -18,8 +18,6 @@ namespace Battle
 
         public override void Update(int step)
         {
-            _entityManager.UpdateWithComponent();
-            
             _entityQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var hurt = _entityManager.GetComponent<Hurt>(entityId);

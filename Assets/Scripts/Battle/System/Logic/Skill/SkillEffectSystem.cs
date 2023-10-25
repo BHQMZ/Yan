@@ -32,8 +32,6 @@ namespace Battle
             _hitQuery.GetEntityIdList().ForEach(TaskEffectHit);
             _rangeHitQuery.GetEntityIdList().ForEach(TaskEffectRangeHit);
             _bulletQuery.GetEntityIdList().ForEach(TaskEffectBullet);
-            
-            _entityManager.UpdateWithComponent();
         }
 
         public override void Destroy()

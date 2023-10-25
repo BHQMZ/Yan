@@ -31,7 +31,6 @@ namespace Battle
             _releaseQuery.GetEntityIdList().ForEach(ReleaseActivate);
             _durationQuery.GetEntityIdList().ForEach(DurationActivate);
             _countQuery.GetEntityIdList().ForEach(CountActivate);
-            _entityManager.UpdateWithComponent();
         }
 
         public override void Destroy()
