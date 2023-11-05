@@ -119,5 +119,25 @@ namespace Battle
 
             return entityId;
         }
+
+        // 创建攻击附带冰冻Buff的被动
+        public static int CreateHitFreeze(EntityManager entityManager)
+        {
+            var entityId = entityManager.CreateEntity();
+            // 条件：被动
+            
+            // 触发：攻击
+            
+            // 效果：附加
+            
+            return entityId;
+        }
+        
+        // 创建冰冻buff
+        public static int CreateFreezeBuff(EntityManager entityManager)
+        {
+            var entityId = entityManager.CreateEntity();
+            return entityId;
+        }
     }
 }
