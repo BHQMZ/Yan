@@ -17,8 +17,8 @@ public class App : MonoBehaviour
     {
         DontDestroyOnLoad(this);
  
-        // _gameApp = new GameApp();
-        // _gameApp.Open();
+        _gameApp = new GameApp();
+        _gameApp.Open();
     }
 
     private void Update()
@@ -79,6 +79,9 @@ public class App : MonoBehaviour
     
     private async void OnReceivedMatchmakerMatched(IMatchmakerMatched matched)
     {
+        var match = await NakamaConnection.Socket.JoinMatchAsync(matched);
+        
+        currentMatch = match;
     }
     
     private void OnReceivedMatchPresence(IMatchPresenceEvent matchPresenceEvent)
@@ -92,5 +95,12 @@ public class App : MonoBehaviour
         {
             
         }
+    }
+    
+    private IMatch currentMatch;
+    
+    public void SendMatchState(long opCode, string state)
+    {
+        NakamaConnection.Socket.SendMatchStateAsync(currentMatch.Id, opCode, state);
     }
 }

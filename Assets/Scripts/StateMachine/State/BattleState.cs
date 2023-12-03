@@ -13,6 +13,11 @@ namespace StateMachine.State
 
         private Logic _logic;
         private Visual _visual;
+        private Network _network;
+        
+        private float _syncFrequency = 0.033f;
+        private float _syncTimer;
+
         private EntityManager _entityManager;
 
         public BattleState(StateMachineBase stateMachine) : base(stateMachine)
@@ -40,6 +45,8 @@ namespace StateMachine.State
                 _logic.Open(entityManager);
                 _visual = new Visual();
                 _visual.Open(entityManager);
+                _network = new Network();
+                _network.Open(entityManager);
 
                 _isStart = true;
             });
@@ -67,12 +74,20 @@ namespace StateMachine.State
                 return;
             }
             _visual.Update(_step, deltaTime);
+
+            _syncTimer += deltaTime;
+            if (_syncTimer >= _syncFrequency)
+            {
+                _syncTimer = 0;
+                _network.Update(_step, deltaTime);
+            }
         }
 
         public override void Exit()
         {
             _logic.Destroy();
             _visual.Destroy();
+            _network.Destroy();
         }
     }
 }
