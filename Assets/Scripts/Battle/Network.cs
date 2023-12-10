@@ -8,6 +8,7 @@ namespace Battle
 
         public void Open(EntityManager entityManager)
         {
+            _systems.Add(new SpawnNetworkSystem());
             _systems.Add(new PlayerNetworkSystem());
 
             _systems.ForEach(system =>

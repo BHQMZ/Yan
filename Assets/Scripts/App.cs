@@ -2,8 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Battle;
+using Google.Protobuf;
 using Nakama;
 using UnityEngine;
+using Action = System.Action;
 
 public class App : MonoBehaviour
 {
@@ -13,9 +16,20 @@ public class App : MonoBehaviour
     
     private GameApp _gameApp;
 
+    public IUserPresence LocalUser;
+    public Action<string, IUserPresence> OnSpawnPlayer;
+    public Action<string, ProtoPlayerMove> OnVelocityAndPosition;
+    public Action<string, ProtoPlayerRelease> OnReleaseSkill;
+    
+    private IMatch currentMatch;
+
+    public static App Instance;
+
     private void Awake()
     {
         DontDestroyOnLoad(this);
+
+        Instance = this;
  
         _gameApp = new GameApp();
         _gameApp.Open();
@@ -79,13 +93,24 @@ public class App : MonoBehaviour
     
     private async void OnReceivedMatchmakerMatched(IMatchmakerMatched matched)
     {
-        var match = await NakamaConnection.Socket.JoinMatchAsync(matched);
+        LocalUser = matched.Self.Presence;
         
+        var match = await NakamaConnection.Socket.JoinMatchAsync(matched);
+
+        foreach (var user in match.Presences)
+        {
+            OnSpawnPlayer(match.Id, user);
+        }
+
         currentMatch = match;
     }
     
     private void OnReceivedMatchPresence(IMatchPresenceEvent matchPresenceEvent)
     {
+        foreach (var user in matchPresenceEvent.Joins)
+        {
+            OnSpawnPlayer(matchPresenceEvent.MatchId, user);
+        }
     }
 
     private async Task OnReceivedMatchState(IMatchState matchState)
@@ -93,13 +118,22 @@ public class App : MonoBehaviour
         var userSessionId = matchState.UserPresence.SessionId;
         switch (matchState.OpCode)
         {
-            
+            case OpCodes.VelocityAndPosition:
+                var move = new ProtoPlayerMove();
+                
+                move.MergeFrom(matchState.State);
+                OnVelocityAndPosition(userSessionId, move);
+                return;
+            case OpCodes.Input:
+                var release = new ProtoPlayerRelease();
+                
+                release.MergeFrom(matchState.State);
+                OnReleaseSkill(userSessionId, release);
+                return;
         }
     }
-    
-    private IMatch currentMatch;
-    
-    public void SendMatchState(long opCode, string state)
+
+    public void SendMatchState(long opCode, byte[] state)
     {
         NakamaConnection.Socket.SendMatchStateAsync(currentMatch.Id, opCode, state);
     }

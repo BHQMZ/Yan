@@ -8,7 +8,7 @@ namespace Battle
 
         public void Open(EntityManager entityManager)
         {
-            _systems.Add(new PlayerControlSystem());
+            _systems.Add(new MainPlayerInputSystem());
             _systems.Add(new CameraSystem());
             _systems.Add(new LoadAssetSystem());
             _systems.Add(new CharacterSystem());

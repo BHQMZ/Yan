@@ -7,7 +7,9 @@ MonoImporter:
   - tableExcelFolder: {fileID: 102900000, guid: a64f7b1045bb472c8d199231eaea7e3e, type: 3}
   - tableProtoFolder: {fileID: 102900000, guid: 6d4aeef7ccc64a428918a9875f0ba13f, type: 3}
   - protoCsharpFolder: {fileID: 102900000, guid: 5586bd67e43fc4104b5f0999a48961e1, type: 3}
-  - protoDataFolder: {fileID: 102900000, guid: c5041dda044743d4b834c5f3f92cd5fb, type: 3}
+  - protoDataFolder: {instanceID: 0}
+  - networkProtoFolder: {fileID: 102900000, guid: cfcf55553df0416f83473a0b257199bf, type: 3}
+  - networkCsharpFolder: {fileID: 102900000, guid: 5100f486efaa454c95767e850006666e, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

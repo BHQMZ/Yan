@@ -31,7 +31,7 @@ namespace StateMachine.State
                 var entityManager = new EntityManager();
                 _entityManager = entityManager;
 
-                CharacterManager.CreateHero(entityManager);
+                // CharacterManager.CreateHero(entityManager);
 
                 CharacterManager.CreateMonster(entityManager);
 

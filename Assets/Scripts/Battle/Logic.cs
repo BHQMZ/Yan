@@ -12,6 +12,7 @@ namespace Battle
             _entityManager = entityManager;
             
             _systems.Add(new BoundsSystem());
+            _systems.Add(new PlayerControlSystem());
             _systems.Add(new MoveControlSystem());
             _systems.Add(new MonsterControlSystem());
             _systems.Add(new ReleaseSkillControlSystem());

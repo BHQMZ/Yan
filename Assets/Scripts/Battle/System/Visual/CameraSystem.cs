@@ -16,7 +16,7 @@
             
             _playerQuery = _entityManager.AddWithComponent(new EntityQueryDesc
             {
-                All = new []{typeof(Character), typeof(PlayerControl)}
+                All = new []{typeof(Character), typeof(MainPlayer)}
             });
         }
 

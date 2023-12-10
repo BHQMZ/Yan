@@ -23,12 +23,19 @@ namespace Proto
                 return _configInstance;
             }
         }
+        
+        [MenuItem("Tools/Network/ProtoToCsharp", false)]
+        public static void NetworkProtoToCsharp()
+        {
+            ProtoToCsharp(config.networkProtoPath, config.networkCsharpPath);
+            AssetDatabase.Refresh();
+        }
 
         [MenuItem("Tools/DataTable/ExcelToProtoCsharp", false)]
         public static void ExcelToProtoCsharp()
         {
             ExcelToProto();
-            ProtoToCsharp();
+            ProtoToCsharp(config.tableProtoPath, config.protoCsharpPath);
             AssetDatabase.Refresh();
         }
 
@@ -98,9 +105,8 @@ message {className}Table{tableStr}";
             }
         }
 
-        private static void ProtoToCsharp()
+        private static void ProtoToCsharp(string path, string toPath)
         {
-            var path = config.tableProtoPath;
             if (!Directory.Exists(path))
             {
                 return;
@@ -110,7 +116,7 @@ message {className}Table{tableStr}";
             var allFiles = dir.GetFileSystemInfos("*.proto", SearchOption.AllDirectories);
             foreach (var fileSystemInfo in allFiles)
             {
-                var arguments = $"-I={path} --csharp_out={config.protoCsharpPath} {fileSystemInfo.Name.Replace(fileSystemInfo.Extension, ".proto")}";
+                var arguments = $"-I={path} --csharp_out={toPath} {fileSystemInfo.Name.Replace(fileSystemInfo.Extension, ".proto")}";
                 
 #if UNITY_EDITOR_WIN
                 Process.Start($"{Application.dataPath}/../Tools/Proto/windows_x86/protoc.exe", arguments);          
