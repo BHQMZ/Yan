@@ -16,7 +16,7 @@ namespace Battle
                 All = new []{typeof(PlayerNetwork)}
             });
 
-            App.Instance.OnSpawnPlayer += OnSpawnPlayer;
+            App.Network.OnSpawnPlayer += OnSpawnPlayer;
         }
 
         public override void Update(int step, float deltaTime)
@@ -41,7 +41,7 @@ namespace Battle
             {
                 SessionId = user.SessionId
             });
-            if (App.Instance.LocalUser.SessionId == user.SessionId)
+            if (App.Network.LocalUser.SessionId == user.SessionId)
             {
                 _entityManager.AddComponent(player, new MainPlayer());
             }

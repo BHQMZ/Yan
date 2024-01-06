@@ -26,8 +26,8 @@ namespace Battle
                 None = new []{typeof(MainPlayer)}
             });
             
-            App.Instance.OnVelocityAndPosition += OnVelocityAndPosition;
-            App.Instance.OnReleaseSkill += OnReleaseSkill;
+            App.Network.OnVelocityAndPosition += OnVelocityAndPosition;
+            App.Network.OnReleaseSkill += OnReleaseSkill;
         }
 
         public override void Update(int step, float deltaTime)
@@ -41,7 +41,7 @@ namespace Battle
             _playerQuery.GetEntityIdList().ForEach(entityId =>
             {
                 var playerControl = _entityManager.GetComponent<PlayerControl>(entityId);
-                App.Instance.SendMatchState(
+                App.Network.SendMatchState(
                     OpCodes.VelocityAndPosition,
                     new ProtoPlayerMove
                     {
@@ -57,7 +57,7 @@ namespace Battle
                 var releaseSkillControl = _entityManager.GetComponent<ReleaseSkillControl>(entityId);
                 if (releaseSkillControl.TriggerSkillIndex > 0)
                 {
-                    App.Instance.SendMatchState(
+                    App.Network.SendMatchState(
                         OpCodes.Input,
                         new ProtoPlayerRelease
                         {

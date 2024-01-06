@@ -6,7 +6,8 @@ namespace StateMachine
     {
         public MainStateMachine()
         {
-            ChangeState(new BattleState(this));
+            // ChangeState(new BattleState(this));
+            ChangeState(new LoginState(this));
         }
     }
 }
