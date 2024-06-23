@@ -40,22 +40,36 @@ namespace Battle
             }
 
             var transform = _entityManager.GetComponent<Transform>(entityId);
-            // // 逻辑位置转表现位置
-            if (transform.Velocity != Vector3.zero)
+            // 未同步，直接同步位置
+            if (!character.IsSync)
             {
-                if (character.MoveStep != _step)
+                character.IsSync = true;
+                character.Transform.position = transform.Position;
+            }
+            // 同步帧
+            if (character.MoveStep != _step)
+            {
+                character.MoveStep = _step;
+                // 存在位置差异，计算插值
+                if (character.Transform.position != transform.Position)
                 {
-                    character.MoveStep = _step;
                     var stepStartPos = character.Transform.position;
                     var stepEndPos = transform.Position;
                     character.StepMoveVelocity = (stepEndPos - stepStartPos).normalized * Vector3.Distance(stepStartPos, stepEndPos) / 0.033f;
                 }
-
+                else
+                {
+                    character.StepMoveVelocity = Vector3.zero;
+                }
+            }
+            // 存在差异，计算插值位置
+            if (character.StepMoveVelocity != Vector3.zero)
+            {
                 character.Transform.position += character.StepMoveVelocity * _deltaTime;
             }
-            else
+            else if (character.Transform.position != transform.Position)
             {
-                character.StepMoveVelocity = Vector3.zero;
+                // 同步位置
                 character.Transform.position = transform.Position;
             }
 

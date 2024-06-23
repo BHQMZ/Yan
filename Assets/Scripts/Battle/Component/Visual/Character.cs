@@ -8,6 +8,7 @@ namespace Battle
         public UnityEngine.Transform Point;
         public Animator Animator;
 
+        public bool IsSync;
         public int MoveStep;
         public Vector3 StepMoveVelocity;
     }

@@ -96,9 +96,13 @@ namespace Battle
                 asset.IsLoading = true;
                 AssetManager.LoadAssetAsync<GameObject>(assetPath + asset.AssetName, go =>
                 {
+                    if (!asset.IsLoading)
+                    {
+                        return;
+                    }
                     asset.IsLoading = false;
                     asset.GO = GameObject.Instantiate(go);
-                    
+
                     callback.Invoke(asset.GO);
                 });
             }
@@ -106,7 +110,18 @@ namespace Battle
 
         private void DestroyAsset(Component component)
         {
-            if (component is not Asset asset || asset.GO == null)
+            if (component is not Asset asset)
+            {
+                return;
+            }
+            
+            if (asset.IsLoading)
+            {
+                asset.IsLoading = false;
+                return;
+            }
+
+            if (asset.GO == null)
             {
                 return;
             }
